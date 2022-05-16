@@ -77,3 +77,7 @@ cat("AF_intraTKTD",quantile(AF_intraTKTD,prob=c(0.5,0.05,0.95)),"\n")
 ### HDMI
 HDMI <- bmd / (AF_interTK*AF_interTD*AF_intraTKTD)
 cat("HDMI",quantile(HDMI,prob=c(0.5,0.05,0.95)),"\n")
+
+HDMI.df <- data.frame(bmd,AUC_dose_h.GM,AUC_dose_m,AF_interTK,AF_interTD,
+                      TK_var.GSD,TD_var.GSD,Intra_var.GSD,AF_intraTKTD,HDMI)
+fwrite(HDMI.df,"HDMI.samples.csv")
