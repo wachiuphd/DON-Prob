@@ -11,7 +11,7 @@ bmd <- 1000*c(bmd_m,bmd_f)[sample.int(10000)]
 cat("bmd",quantile(bmd,prob=c(0.5,0.05,0.95)),"\n")
 
 ### Inter-species TK
-# Mouse TK from literature search [NEED TO CHECK THIS]
+# Mouse TK from literature search [NEED TO CHECK THIS -- are some of them ip dosing?]
 # 1.64 mg-hr/L per mg/kg from Clark et al. 2015 in Adult mice
 # 4.51 mg-hr/L per mg/kg from Clark et al. 2015 in Aged mice
 # Assume GM = 1.64, upper 95% Conf bound = 4.51
