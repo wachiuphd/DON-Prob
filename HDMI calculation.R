@@ -15,17 +15,18 @@ cat("bmd",quantile(bmd,prob=c(0.5,0.05,0.95)),"\n")
 # Clark et al. 2015: i.p. exposure
 # 1.64 mg-hr/L per mg/kg from Clark et al. 2015 in Adult mice
 # 4.51 mg-hr/L per mg/kg from Clark et al. 2015 in Aged mice
-# Assume GM = 1.64, upper 95% Conf bound = 4.51
-# 90% CI is 0.60 - 4.51, and includes other values from Pestka et al. 2017
-# of 0.66 - 0.91 mg-hr/L per mg/kg
-AUC_dose_m <- rlnorm(10000,meanlog = log(1.64), sdlog=log((4.51/1.64)^(1/qnorm(0.95))))
-cat("AUC_dose_m",quantile(AUC_dose_m,prob=c(0.5,0.05,0.95)),"\n")
-
+# Use GM and GSD from Pestka et al. 2017 of CI: 0.66 - 0.91 mg-hr/L per mg/kg
 # Mouse TK from Faeste et al.
+# oral
 # CL in L/hr = 0.4082 * BW^0.8737
 # AUC/dose = BW/CL = Fabs*BW^0.1263 / 0.4082 (kg*hr/L)
 # BW in Iverson study is (0.04385,0.04154) for males/females
 # = Fabs*1.64 
+# ip dosing: AUC/dose = 1.64 which is the same as Clark et al. 2015 (1.64 mg-hr/L per mg/kg) in adult mice
+# Fabs = 0.66/1.64 ~ 0.91/1.64 based on Pestka et al. 2017 of CI: 0.66 - 0.91 mg-hr/L per mg/kg
+# Fabs = 0.40 ~ 0.56 slightly lower than human value of 0.6 (check the model)
+AUC_dose_m <- rlnorm(10000,meanlog = log(0.775), sdlog=log(1.25))
+cat("AUC_dose_m",quantile(AUC_dose_m,prob=c(0.5,0.05,0.95)),"\n")
 
 # Human from TK model
 # ktot = 0.4 hr^-1
@@ -35,20 +36,6 @@ cat("AUC_dose_m",quantile(AUC_dose_m,prob=c(0.5,0.05,0.95)),"\n")
 AUC_dose_h.df <- fread(file.path(datafolder,"AUC_dose_samples.csv"))
 AUC_dose_h.GM <- rep(AUC_dose_h.df$GM_AUC_dose,20)[sample.int(10000)]
 cat("AUC_dose_h.GM",quantile(AUC_dose_h.GM,prob=c(0.5,0.05,0.95)),"\n")
-
-# Human TK from Faeste et al.
-# CL in L/hr = 0.4082 * BW^0.8737
-# AUC/dose = Fabs*BW/CL = Fabs*BW^0.1263 / 0.4082 (kg*hr/L)
-# BW of 70 kg 
-# = Fabs*4.19
-
-# Maybe should just do ratio of clearances -- assume Fabs is the same for diet
-# CL_m = 0.4082*0.04^(0.8737-1) = 0.613 L/(hr kg)
-# CL_h = 1.24 * 0.4 = 0.5 L/(hr kg)
-# CL_m/CL_h = 1.23 [instead of 0.86]
-# From allometric scaling from Faeste (70/0.04)^0.1263 = 2.57
-# From WHO allometric scaling (50/0.04)^0.3 = 8.5
-
 
 # Combined Mouse -> Human AF
 AF_interTK <- AUC_dose_h.GM/AUC_dose_m
