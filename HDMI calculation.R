@@ -11,27 +11,33 @@ bmd <- 1000*c(bmd_m,bmd_f)[sample.int(10000)]
 cat("bmd",quantile(bmd,prob=c(0.5,0.05,0.95)),"\n")
 
 ### Inter-species TK
-# Mouse TK from literature search [NEED TO CHECK THIS -- are some of them ip dosing?]
+# Mouse TK from literature search
 # Clark et al. 2015: i.p. exposure
+# Pestka & Amuzie, 2008: oral exposure
 # 1.64 mg-hr/L per mg/kg from Clark et al. 2015 in Adult mice
 # 4.51 mg-hr/L per mg/kg from Clark et al. 2015 in Aged mice
-# Use GM and GSD from Pestka et al. 2017 of CI: 0.66 - 0.91 mg-hr/L per mg/kg
+# Use GM and GSD from Pestka & Amuzie, 2008:
+# GM = 3.98/5 = 0.8 mg-hr/L per mg/kg; GSD = 3^(1/1.96) in 95% CI
+
+# Aged/Adult mice ratio from Clark et al. 2015: 
+# Used the ratio of 4.51/1.64 = 3 to derive GSD = 3^(1/1.96)
+
 # Mouse TK from Faeste et al.
 # oral
 # CL in L/hr = 0.4082 * BW^0.8737
-# AUC/dose = BW/CL = Fabs*BW^0.1263 / 0.4082 (kg*hr/L)
+# AUC/dose = Fabs*BW/CL = Fabs*BW^0.1263 / 0.4082 (kg*hr/L)
 # BW in Iverson study is (0.04385,0.04154) for males/females
 # = Fabs*1.64 
 # ip dosing: AUC/dose = 1.64 which is the same as Clark et al. 2015 (1.64 mg-hr/L per mg/kg) in adult mice
-# Fabs = 0.66/1.64 ~ 0.91/1.64 based on Pestka et al. 2017 of CI: 0.66 - 0.91 mg-hr/L per mg/kg
-# Fabs = 0.40 ~ 0.56 slightly lower than human value of 0.6 (check the model)
-AUC_dose_m <- rlnorm(10000,meanlog = log(0.775), sdlog=log(1.25))
+# AUC/dose = Fabs*1.64
+# Fabs = 0.8/1.64 =0.5 slightly lower than human value of 0.61 from posterior parameter
+AUC_dose_m <- rlnorm(10000,meanlog = log(0.8), sdlog=log(1.75))
 cat("AUC_dose_m",quantile(AUC_dose_m,prob=c(0.5,0.05,0.95)),"\n")
 
 # Human from TK model
 # ktot = 0.4 hr^-1
-# Fabs = 0.6
-# Vd = 1.24 L/kg
+# Fabs = 0.6 (Faste et al. 2018)
+# Vd = 1.24 L/kg (Faste et al. 2018)
 # AUC/dose = Fabs/(Vd * ktot)
 AUC_dose_h.df <- fread(file.path(datafolder,"AUC_dose_samples.csv"))
 AUC_dose_h.GM <- rep(AUC_dose_h.df$GM_AUC_dose,20)[sample.int(10000)]
@@ -55,7 +61,7 @@ cat("TK_var.GSD",quantile(TK_var.GSD,prob=c(0.5,0.05,0.95)),"\n")
 ### Intra-species TD
 TD_var.df <- fread(file.path(datafolder,"DON-EC10_pop_samples.csv"))
 TD_var.GSD <- TD_var.df$EC10.GSD[sample.int(4000,size = 10000,replace=TRUE)]
-cat("TD_var.GSD",quantile(TK_var.GSD,prob=c(0.5,0.05,0.95)),"\n")
+cat("TD_var.GSD",quantile(TD_var.GSD,prob=c(0.5,0.05,0.95)),"\n")
 
 ### Intra-species TK+TD
 Intra_var.GSD <- exp(sqrt(log(TK_var.GSD)^2+log(TD_var.GSD)^2))
