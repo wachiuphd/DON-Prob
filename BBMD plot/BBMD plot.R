@@ -32,7 +32,7 @@ Exp2_femaleplot <- ggplot(tExp2_female_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
   scale_x_continuous(breaks=seq(0,2,by=0.25))+
   scale_y_continuous(breaks=seq(20,50,by=5))
 Exp2_femaleplot
@@ -61,7 +61,7 @@ Exp3_femaleplot <- ggplot(tExp3_female_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
   scale_x_continuous(breaks=seq(0,2,by=0.25))+
   scale_y_continuous(breaks=seq(20,50,by=5))
 Exp3_femaleplot
@@ -90,7 +90,7 @@ Exp4_femaleplot <- ggplot(tExp4_female_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
   scale_x_continuous(breaks=seq(0,2,by=0.25))+
   scale_y_continuous(breaks=seq(20,50,by=5))
 Exp4_femaleplot
@@ -120,7 +120,7 @@ Exp5_femaleplot <- ggplot(tExp5_female_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
   scale_x_continuous(breaks=seq(0,2,by=0.25))+
   scale_y_continuous(breaks=seq(20,50,by=5))
 Exp5_femaleplot
@@ -150,7 +150,7 @@ Hill_femaleplot <- ggplot(tHill_female_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
   scale_x_continuous(breaks=seq(0,2,by=0.25))+
   scale_y_continuous(breaks=seq(20,50,by=5))
 Hill_femaleplot
@@ -179,7 +179,7 @@ Power_femaleplot <- ggplot(tPower_female_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
   scale_x_continuous(breaks=seq(0,2,by=0.25))+
   scale_y_continuous(breaks=seq(20,50,by=5))
 Power_femaleplot
@@ -208,7 +208,7 @@ Mich_femaleplot <- ggplot(tMich_female_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
   scale_x_continuous(breaks=seq(0,2,by=0.25))+
   scale_y_continuous(breaks=seq(20,50,by=5))
 Mich_femaleplot
@@ -236,7 +236,7 @@ Linear_femaleplot <- ggplot(tLinear_female_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
   scale_x_continuous(breaks=seq(0,2,by=0.25))+
   scale_y_continuous(breaks=seq(20,50,by=5))
 Linear_femaleplot
@@ -247,12 +247,12 @@ female_combine <- ggarrange(Exp2_femaleplot, Exp3_femaleplot, Exp4_femaleplot, E
          ncol=2, nrow=4)
 female_combine <- annotate_figure(female_combine, top = text_grob("Female mice",
                                                 size = 22))
-ggsave("female_combine.pdf", plot=female_combine, width=20, height=24)
+print(female_combine)
 
 ##male
 male_mice <- read.csv("iverson-f-et-al-1995-male-parameters.csv")
 dose_mice_male <- dose_mice[1:4,]
-dose <- data.frame(dose=seq(from=0, to=1.4, by=0.028))
+dose <- data.frame(dose=seq(from=0, to=2, by=0.04))
 
 #Exp 2
 #y=a*exp(b*dose)
@@ -277,9 +277,9 @@ Exp2_maleplot <- ggplot(tExp2_male_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
-  scale_x_continuous(breaks=seq(0,1.4,by=0.2))+
-  scale_y_continuous(breaks=seq(30,50,by=2.5))
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
+  scale_x_continuous(breaks=seq(0,2,by=0.25))+
+  scale_y_continuous(limits=c(25,47),breaks=c(25,30,35,40,45),labels=c(25,30,35,40,45))
 Exp2_maleplot
 
 #Exp 3
@@ -306,9 +306,9 @@ Exp3_maleplot <- ggplot(tExp3_male_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
-  scale_x_continuous(breaks=seq(0,1.4,by=0.2))+
-  scale_y_continuous(breaks=seq(30,50,by=2.5))
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
+  scale_x_continuous(breaks=seq(0,2,by=0.25))+
+  scale_y_continuous(limits=c(23,47),breaks=c(25,30,35,40,45),labels=c(25,30,35,40,45))
 Exp3_maleplot
 
 #Exp 4
@@ -335,9 +335,9 @@ Exp4_maleplot <- ggplot(tExp4_male_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
-  scale_x_continuous(breaks=seq(0,1.4,by=0.2))+
-  scale_y_continuous(breaks=seq(30,50,by=2.5))
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
+  scale_x_continuous(breaks=seq(0,2,by=0.25))+
+  scale_y_continuous(limits=c(25,47),breaks=c(25,30,35,40,45),labels=c(25,30,35,40,45))
 Exp4_maleplot
 
 #Exp 5
@@ -365,9 +365,9 @@ Exp5_maleplot <- ggplot(tExp5_male_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
-  scale_x_continuous(breaks=seq(0,1.4,by=0.2))+
-  scale_y_continuous(breaks=seq(30,50,by=2.5))
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
+  scale_x_continuous(breaks=seq(0,2,by=0.25))+
+  scale_y_continuous(limits=c(25,47),breaks=c(25,30,35,40,45),labels=c(25,30,35,40,45))
 Exp5_maleplot
 
 #Hill
@@ -395,9 +395,9 @@ Hill_maleplot <- ggplot(tHill_male_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
-  scale_x_continuous(breaks=seq(0,1.4,by=0.2))+
-  scale_y_continuous(breaks=seq(30,50,by=2.5))
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
+  scale_x_continuous(breaks=seq(0,2,by=0.25))+
+  scale_y_continuous(limits=c(25,47),breaks=c(25,30,35,40,45),labels=c(25,30,35,40,45))
 Hill_maleplot
 
 #Power
@@ -424,9 +424,9 @@ Power_maleplot <- ggplot(tPower_male_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
-  scale_x_continuous(breaks=seq(0,1.4,by=0.2))+
-  scale_y_continuous(breaks=seq(30,50,by=2.5))
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
+  scale_x_continuous(breaks=seq(0,2,by=0.25))+
+  scale_y_continuous(limits=c(20,47),breaks=c(25,30,35,40,45),labels=c(25,30,35,40,45))
 Power_maleplot
 
 #MichaelisMenten
@@ -453,9 +453,9 @@ Mich_maleplot <- ggplot(tMich_male_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
-  scale_x_continuous(breaks=seq(0,1.4,by=0.2))+
-  scale_y_continuous(breaks=seq(30,50,by=2.5))
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
+  scale_x_continuous(breaks=seq(0,2,by=0.25))+
+  scale_y_continuous(limits=c(25,47),breaks=c(25,30,35,40,45),labels=c(25,30,35,40,45))
 Mich_maleplot
 
 #Linear
@@ -481,9 +481,9 @@ Linear_maleplot <- ggplot(tLinear_male_quan, aes(x=dose))+
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
-  xlab("Dose") + ylab("Response")+
-  scale_x_continuous(breaks=seq(0,1.4,by=0.2))+
-  scale_y_continuous(breaks=seq(30,50,by=2.5))
+  xlab("Dose (mg/kg-day)") + ylab("Response")+
+  scale_x_continuous(breaks=seq(0,2,by=0.25))+
+  scale_y_continuous(limits=c(25,47),breaks=c(25,30,35,40,45),labels=c(25,30,35,40,45))
 Linear_maleplot
 
 #Combine plots
@@ -491,43 +491,51 @@ male_combine <- ggarrange(Exp2_maleplot, Exp3_maleplot, Exp4_maleplot, Exp5_male
                             Hill_maleplot, Power_maleplot, Mich_maleplot, Linear_maleplot,
                             ncol=2, nrow=4)
 male_combine <- annotate_figure(male_combine, top = text_grob("Male mice",
-                                                                size = 22))
-ggsave("male_combine.pdf", plot=male_combine, width=20, height=24)
+                                                              size = 22))
+print(male_combine)          
 
 #combine male and female models
 doseresponse <- ggarrange(male_combine, female_combine,
                            ncol = 2, nrow = 1)
-ggsave("doseresponse.pdf", plot=doseresponse, width=20, height=12)
+print(doseresponse)
 
 #posterior model average
-female_bmds <- read.csv("iverson-f-et-al-1995-female-bmds.csv")
-male_bmds <- read.csv("iverson-f-et-al-1995-male-bmds.csv")
+bmds_f <- read.csv("iverson-f-et-al-1995-female-bmds.csv")
+bmds_m <- read.csv("iverson-f-et-al-1995-male-bmds.csv")
 
-female_average <- ggplot(female_bmds, aes(x=model_average)) + geom_density() +
+quantile(bmds_f$model_average, prob=c(0.5, 0.05, 0.95))
+quantile(bmds_m$model_average, prob=c(0.5, 0.05, 0.95))
+
+bmds.average_f <- ggplot(bmds_f, aes(x=model_average)) + geom_density() +
   ggtitle("Model Average") + 
   theme_classic() +
-  theme(axis.title.x=element_blank(), 
-        plot.title = element_text(hjust = 0.5),
+  theme(plot.title = element_text(hjust = 0.5),
         text = element_text(size = 16))+
-  scale_x_continuous(breaks=seq(0,0.6,by=0.1))+
-  scale_y_continuous(breaks=seq(0,10,by=2))
-ggsave("female_average.pdf", plot=female_average, width=10, height=6)
+  annotate("text", x=0.22, y=1, label= "0.22 [0.14-0.30]", size=5) +
+  annotate("pointrange", x = 0.22, y = 0, xmin = quantile(bmds_f$model_average, prob=c(0.05)), xmax = quantile(bmds_f$model_average, prob=c(0.95)), size =1) +
+  scale_x_continuous(limit=c(0,0.5), breaks=seq(0,0.5,by=0.1))+
+  scale_y_continuous(breaks=seq(0,12,by=2))+
+  xlab("Dose (mg/kg-day)")+ylab("density")
+print(bmds.average_f)
 
-male_average <- ggplot(male_bmds, aes(x=model_average)) + geom_density() +
+bmds.average_m <- ggplot(bmds_m, aes(x=model_average)) + geom_density() +
   ggtitle("Model Average") + 
   theme_classic() +
-  theme(axis.title.x=element_blank(), 
-        plot.title = element_text(hjust = 0.5),
+  theme(plot.title = element_text(hjust = 0.5),
         text = element_text(size = 16))+
-  scale_x_continuous(breaks=seq(0.15,0.55,by=0.05))+
-  scale_y_continuous(breaks=seq(0,12,by=2))
-ggsave("male_average.pdf", plot=male_average, width=10, height=6)
+  annotate("text", x=0.3, y=1, label= "0.27 [0.22-0.42]", size=5) +
+  annotate("pointrange", x = 0.27, y = 0, xmin = quantile(bmds_m$model_average, prob=c(0.05)), xmax = quantile(bmds_m$model_average, prob=c(0.95)), size =1) +
+  scale_x_continuous(limit=c(0,0.5), breaks=seq(0,0.5,by=0.1))+
+  scale_y_continuous(breaks=seq(0,12,by=2))+
+  xlab("Dose (mg/kg-day)")+ylab("density")
+print(bmds.average_m)
 
-modelaverage <- ggarrange(male_average, female_average,
+modelaverage <- ggarrange(bmds.average_m, bmds.average_f,
                            ncol = 2, nrow = 1)
-ggsave("modelaverage.pdf", plot=modelaverage, width=20, height=6)
+print(modelaverage)
 
 #combine into one graph
-BBMD <- ggarrange(doseresponse,modelaverage, ncol=1, nrow=2,
+BBMD <- ggarrange(doseresponse, modelaverage, ncol=1, nrow=2,
                   heights = c(12, 6))
+print(BBMD)
 ggsave("BBMD.pdf",plot=BBMD, width=20, height=18)
