@@ -22,6 +22,7 @@ names(incBMR) <- paste("dose",1:length(d_H),sep=".")
 incBMRconf <- as.data.frame(t(apply(incBMR,2,quantile,prob=c(0.05,0.5,0.95))))
 incBMRconf$d_H <- d_H
 
+
 incBMR5 <- ggplot(incBMRconf)+
   geom_ribbon(aes(x=d_H,ymin =`5%`,ymax=`95%`),alpha=0.2)+
   geom_line(aes(x=d_H,y=`50%`))+
@@ -113,7 +114,7 @@ for (inc in c(0.01,0.5,0.99)) { # individual percentiles
     samp.parms.6 <- female_mice[sample(c(25001:30000), size=w_k5000_female[6]),]
     samp.parms.7 <- female_mice[sample(c(30001:35000), size=w_k5000_female[7]),]
     samp.parms.8 <- female_mice[sample(c(35001:40000), size=w_k5000_female[8]),]
-    
+
     # Use subsamples of AED
     y_female <- c(
       frachange.1(a=samp.parms.1$a, b=samp.parms.1$b, dose=AED[(1+w_k5000_female_cum[1]):w_k5000_female_cum[2]], dose.max=1.5)
@@ -238,7 +239,7 @@ for (j in 1:length(d_H)) {
     samp.parms.6 <- female_mice[sample(c(25001:30000), size=w_k5000_female[6]),]
     samp.parms.7 <- female_mice[sample(c(30001:35000), size=w_k5000_female[7]),]
     samp.parms.8 <- female_mice[sample(c(35001:40000), size=w_k5000_female[8]),]
-    
+
     # Use subsamples of AED
     y_female <- c(
       frachange.1(a=samp.parms.1$a, b=samp.parms.1$b, dose=AED[(1+w_k5000_female_cum[1]):w_k5000_female_cum[2]])
