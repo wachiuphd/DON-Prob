@@ -3,11 +3,11 @@ library(ggplot2)
 set.seed(3.14159)
 datafolder <- "InputData"
 ### POD from BBMD
-bmd_m.df <- fread(file.path(datafolder,"iverson-f-et-al-1995-male-bmds.csv"))
-bmd_f.df <- fread(file.path(datafolder,"iverson-f-et-al-1995-female-bmds.csv"))
+bmd_m.df <- fread(file.path(datafolder,"don-male-bmds.csv"))
+bmd_f.df <- fread(file.path(datafolder,"don-female-bmds.csv"))
 bmd_m <- bmd_m.df$model_average
 bmd_f <- bmd_f.df$model_average
-bmd <- 1000*c(bmd_m,bmd_f)[sample.int(10000)]
+bmd <- 1000*c(bmd_m,bmd_f)[sample.int(30000,10000)]
 cat("bmd",quantile(bmd,prob=c(0.5,0.05,0.95)),"\n")
 
 ### Inter-species TK
@@ -75,3 +75,6 @@ cat("HDMI",quantile(HDMI,prob=c(0.5,0.05,0.95)),"\n")
 HDMI.df <- data.frame(bmd,AUC_dose_h.GM,AUC_dose_m,AF_interTK,AF_interTD,
                       TK_var.GSD,TD_var.GSD,Intra_var.GSD,AF_intraTKTD,HDMI)
 fwrite(HDMI.df,"HDMI.samples.csv")
+
+HDMI.quan <- sapply(HDMI.df, quantile, probs=c(0.5, 0.05, 0.95))
+write.csv(HDMI.quan,file="HDMI.quantiles.csv")

@@ -5,14 +5,14 @@ library(ggpubr)
 dose_mice <- read.csv("iverson dose mice.csv")
 
 ##female
-female_mice <- read.csv("iverson-f-et-al-1995-female-parameters.csv")
+female_mice <- read.csv("don-female-parameters.csv")
 dose_mice_female <- dose_mice[5:8,]
 dose <- data.frame(dose=seq(from=0, to=2, by=0.04))
 
 #Exp 2
 #y=a*exp(b*dose)
-Exp2_female <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
+Exp2_female <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
   a <- female_mice$a[i]
   b <- female_mice$b[i]
   Exp2_female[,i] <- a*exp(b*dose$dose/1.5)
@@ -28,7 +28,7 @@ Exp2_femaleplot <- ggplot(tExp2_female_quan, aes(x=dose))+
   geom_line(data=tExp2_female_quan, aes(x=dose, y=tExp2_female_quan$`50%`))+
   geom_point(data=dose_mice_female, aes(x=dose, y=mean))+
   geom_errorbar(data=dose_mice_female, aes(x=dose, ymin=mean-SD, ymax=mean+SD)) +
-  ggtitle("Exponential 2 (27.1%)") +
+  ggtitle("Exponential 2 (26.9%)") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
@@ -39,11 +39,11 @@ Exp2_femaleplot
 
 #Exp 3
 #y=a*exp(b*(dose^g))
-Exp3_female <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- female_mice$a[i+5000]
-  b <- female_mice$b[i+5000]
-  g <- female_mice$g[i+5000]
+Exp3_female <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- female_mice$a[i+15000]
+  b <- female_mice$b[i+15000]
+  g <- female_mice$g[i+15000]
   Exp3_female[,i] <- a*exp(b*((dose$dose/1.5)^g))
 }
 #Plot
@@ -68,11 +68,11 @@ Exp3_femaleplot
 
 #Exp 4
 #y=a*[c-(c-1)*exp(-b*dose)]
-Exp4_female <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- female_mice$a[i+10000]
-  b <- female_mice$b[i+10000]
-  c <- female_mice$c[i+10000]
+Exp4_female <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- female_mice$a[i+30000]
+  b <- female_mice$b[i+30000]
+  c <- female_mice$c[i+30000]
   Exp4_female[,i] <- a*(c-(c-1)*exp(-b*(dose$dose/1.5)))
 }
 #Plot
@@ -86,7 +86,7 @@ Exp4_femaleplot <- ggplot(tExp4_female_quan, aes(x=dose))+
   geom_line(data=tExp4_female_quan, aes(x=dose, y=tExp4_female_quan$`50%`))+
   geom_point(data=dose_mice_female, aes(x=dose, y=mean))+
   geom_errorbar(data=dose_mice_female, aes(x=dose, ymin=mean-SD, ymax=mean+SD))+
-  ggtitle("Exponential 4 (21.6%)") +
+  ggtitle("Exponential 4 (21.2%)") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
@@ -97,12 +97,12 @@ Exp4_femaleplot
 
 #Exp 5
 #y=a*[c-(c-1)*exp(-(b*dose)^g)]
-Exp5_female <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- female_mice$a[i+15000]
-  b <- female_mice$b[i+15000]
-  c <- female_mice$c[i+15000]
-  g <- female_mice$g[i+15000]
+Exp5_female <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- female_mice$a[i+45000]
+  b <- female_mice$b[i+45000]
+  c <- female_mice$c[i+45000]
+  g <- female_mice$g[i+45000]
   Exp5_female[,i] <- a*(c-(c-1)*exp(-(b*(dose$dose/1.5))^g))
 }
 #Plot
@@ -127,12 +127,12 @@ Exp5_femaleplot
 
 #Hill
 #y=a+(b*dose^g)/(c^g+dose^g)
-Hill_female <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- female_mice$a[i+20000]
-  b <- female_mice$b[i+20000]
-  c <- female_mice$c[i+20000]
-  g <- female_mice$g[i+20000]
+Hill_female <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- female_mice$a[i+60000]
+  b <- female_mice$b[i+60000]
+  c <- female_mice$c[i+60000]
+  g <- female_mice$g[i+60000]
   Hill_female[,i] <- a+(b*(dose$dose/1.5)^g)/(c^g+(dose$dose/1.5)^g)
 }
 #Plot
@@ -146,7 +146,7 @@ Hill_femaleplot <- ggplot(tHill_female_quan, aes(x=dose))+
   geom_line(data=tHill_female_quan, aes(x=dose, y=tHill_female_quan$`50%`))+
   geom_point(data=dose_mice_female, aes(x=dose, y=mean))+
   geom_errorbar(data=dose_mice_female, aes(x=dose, ymin=mean-SD, ymax=mean+SD))+
-  ggtitle("Hill (5.8%)") +
+  ggtitle("Hill (5.9%)") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
@@ -157,11 +157,11 @@ Hill_femaleplot
 
 #Power
 #y=a+b*(dose^g)
-Power_female <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- female_mice$a[i+25000]
-  b <- female_mice$b[i+25000]
-  g <- female_mice$g[i+25000]
+Power_female <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- female_mice$a[i+75000]
+  b <- female_mice$b[i+75000]
+  g <- female_mice$g[i+75000]
   Power_female[,i] <- a+b*((dose$dose/1.5)^g)
 }
 #Plot
@@ -175,7 +175,7 @@ Power_femaleplot <- ggplot(tPower_female_quan, aes(x=dose))+
   geom_line(data=tPower_female_quan, aes(x=dose, y=tPower_female_quan$`50%`))+
   geom_point(data=dose_mice_female, aes(x=dose, y=mean))+
   geom_errorbar(data=dose_mice_female, aes(x=dose, ymin=mean-SD, ymax=mean+SD))+
-  ggtitle("Power (3.1%)") +
+  ggtitle("Power (3.2%)") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
@@ -186,11 +186,11 @@ Power_femaleplot
 
 #MichaelisMenten
 #y=a+(b*dose)/(c+dose)
-Mich_female <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- female_mice$a[i+30000]
-  b <- female_mice$b[i+30000]
-  c <- female_mice$c[i+30000]
+Mich_female <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- female_mice$a[i+90000]
+  b <- female_mice$b[i+90000]
+  c <- female_mice$c[i+90000]
   Mich_female[,i] <- a+(b*(dose$dose/1.5))/(c+dose$dose/1.5)
 }
 #Plot
@@ -204,7 +204,7 @@ Mich_femaleplot <- ggplot(tMich_female_quan, aes(x=dose))+
   geom_line(data=tMich_female_quan, aes(x=dose, y=tMich_female_quan$`50%`))+
   geom_point(data=dose_mice_female, aes(x=dose, y=mean))+
   geom_errorbar(data=dose_mice_female, aes(x=dose, ymin=mean-SD, ymax=mean+SD))+
-  ggtitle("Michaelis-Menten (17.4%)") +
+  ggtitle("Michaelis-Menten (17.9%)") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
@@ -215,10 +215,10 @@ Mich_femaleplot
 
 #Linear
 #y=a+b*dose
-Linear_female <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- female_mice$a[i+35000]
-  b <- female_mice$b[i+35000]
+Linear_female <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- female_mice$a[i+105000]
+  b <- female_mice$b[i+105000]
   Linear_female[,i] <- a+b*dose$dose/1.5
 }
 #Plot
@@ -250,14 +250,14 @@ female_combine <- annotate_figure(female_combine, top = text_grob("Female mice",
 print(female_combine)
 
 ##male
-male_mice <- read.csv("iverson-f-et-al-1995-male-parameters.csv")
+male_mice <- read.csv("don-male-parameters.csv")
 dose_mice_male <- dose_mice[1:4,]
 dose <- data.frame(dose=seq(from=0, to=2, by=0.04))
 
 #Exp 2
 #y=a*exp(b*dose)
-Exp2_male <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
+Exp2_male <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
   a <- male_mice$a[i]
   b <- male_mice$b[i]
   Exp2_male[,i] <- a*exp(b*dose$dose/1.1)
@@ -284,11 +284,11 @@ Exp2_maleplot
 
 #Exp 3
 #y=a*exp(b*(dose^g))
-Exp3_male <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- male_mice$a[i+5000]
-  b <- male_mice$b[i+5000]
-  g <- male_mice$g[i+5000]
+Exp3_male <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- male_mice$a[i+15000]
+  b <- male_mice$b[i+15000]
+  g <- male_mice$g[i+15000]
   Exp3_male[,i] <- a*exp(b*((dose$dose/1.1)^g))
 }
 #Plot
@@ -302,7 +302,7 @@ Exp3_maleplot <- ggplot(tExp3_male_quan, aes(x=dose))+
   geom_line(data=tExp3_male_quan, aes(x=dose, y=tExp3_male_quan$`50%`))+
   geom_point(data=dose_mice_male, aes(x=dose, y=mean))+
   geom_errorbar(data=dose_mice_male, aes(x=dose, ymin=mean-SD, ymax=mean+SD)) +
-  ggtitle("Exponential 3 (12.0%)") +
+  ggtitle("Exponential 3 (12.1%)") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
@@ -313,11 +313,11 @@ Exp3_maleplot
 
 #Exp 4
 #y=a*[c-(c-1)*exp(-b*dose)]
-Exp4_male <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- male_mice$a[i+10000]
-  b <- male_mice$b[i+10000]
-  c <- male_mice$c[i+10000]
+Exp4_male <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- male_mice$a[i+30000]
+  b <- male_mice$b[i+30000]
+  c <- male_mice$c[i+30000]
   Exp4_male[,i] <- a*(c-(c-1)*exp(-b*(dose$dose/1.1)))
 }
 #Plot
@@ -331,7 +331,7 @@ Exp4_maleplot <- ggplot(tExp4_male_quan, aes(x=dose))+
   geom_line(data=tExp4_male_quan, aes(x=dose, y=tExp4_male_quan$`50%`))+
   geom_point(data=dose_mice_male, aes(x=dose, y=mean))+
   geom_errorbar(data=dose_mice_male, aes(x=dose, ymin=mean-SD, ymax=mean+SD))+
-  ggtitle("Exponential 4 (9.0%)") +
+  ggtitle("Exponential 4 (8.9%)") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
@@ -342,12 +342,12 @@ Exp4_maleplot
 
 #Exp 5
 #y=a*[c-(c-1)*exp(-(b*dose)^g)]
-Exp5_male <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- male_mice$a[i+15000]
-  b <- male_mice$b[i+15000]
-  c <- male_mice$c[i+15000]
-  g <- male_mice$g[i+15000]
+Exp5_male <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- male_mice$a[i+45000]
+  b <- male_mice$b[i+45000]
+  c <- male_mice$c[i+45000]
+  g <- male_mice$g[i+45000]
   Exp5_male[,i] <- a*(c-(c-1)*exp(-(b*(dose$dose/1.1))^g))
 }
 #Plot
@@ -361,7 +361,7 @@ Exp5_maleplot <- ggplot(tExp5_male_quan, aes(x=dose))+
   geom_line(data=tExp5_male_quan, aes(x=dose, y=tExp5_male_quan$`50%`))+
   geom_point(data=dose_mice_male, aes(x=dose, y=mean))+
   geom_errorbar(data=dose_mice_male, aes(x=dose, ymin=mean-SD, ymax=mean+SD))+
-  ggtitle("Exponential 5 (6.4%)") +
+  ggtitle("Exponential 5 (6.3%)") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
@@ -372,12 +372,12 @@ Exp5_maleplot
 
 #Hill
 #y=a+(b*dose^g)/(c^g+dose^g)
-Hill_male <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- male_mice$a[i+20000]
-  b <- male_mice$b[i+20000]
-  c <- male_mice$c[i+20000]
-  g <- male_mice$g[i+20000]
+Hill_male <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- male_mice$a[i+60000]
+  b <- male_mice$b[i+60000]
+  c <- male_mice$c[i+60000]
+  g <- male_mice$g[i+60000]
   Hill_male[,i] <- a+(b*(dose$dose/1.1)^g)/(c^g+(dose$dose/1.1)^g)
 }
 #Plot
@@ -391,7 +391,7 @@ Hill_maleplot <- ggplot(tHill_male_quan, aes(x=dose))+
   geom_line(data=tHill_male_quan, aes(x=dose, y=tHill_male_quan$`50%`))+
   geom_point(data=dose_mice_male, aes(x=dose, y=mean))+
   geom_errorbar(data=dose_mice_male, aes(x=dose, ymin=mean-SD, ymax=mean+SD))+
-  ggtitle("Hill (6.5%)") +
+  ggtitle("Hill (6.6%)") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
@@ -402,11 +402,11 @@ Hill_maleplot
 
 #Power
 #y=a+b*(dose^g)
-Power_male <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- male_mice$a[i+25000]
-  b <- male_mice$b[i+25000]
-  g <- male_mice$g[i+25000]
+Power_male <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- male_mice$a[i+75000]
+  b <- male_mice$b[i+75000]
+  g <- male_mice$g[i+75000]
   Power_male[,i] <- a+b*((dose$dose/1.1)^g)
 }
 #Plot
@@ -431,11 +431,11 @@ Power_maleplot
 
 #MichaelisMenten
 #y=a+(b*dose)/(c+dose)
-Mich_male <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- male_mice$a[i+30000]
-  b <- male_mice$b[i+30000]
-  c <- male_mice$c[i+30000]
+Mich_male <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- male_mice$a[i+90000]
+  b <- male_mice$b[i+90000]
+  c <- male_mice$c[i+90000]
   Mich_male[,i] <- a+(b*(dose$dose/1.1))/(c+dose$dose/1.1)
 }
 #Plot
@@ -460,10 +460,10 @@ Mich_maleplot
 
 #Linear
 #y=a+b*dose
-Linear_male <- as.data.frame(matrix(NA, 51, 5000))
-for (i in 1:5000){
-  a <- male_mice$a[i+35000]
-  b <- male_mice$b[i+35000]
+Linear_male <- as.data.frame(matrix(NA, 51, 15000))
+for (i in 1:15000){
+  a <- male_mice$a[i+105000]
+  b <- male_mice$b[i+105000]
   Linear_male[,i] <- a+b*dose$dose/1.1
 }
 #Plot
@@ -477,7 +477,7 @@ Linear_maleplot <- ggplot(tLinear_male_quan, aes(x=dose))+
   geom_line(data=tLinear_male_quan, aes(x=dose, y=tLinear_male_quan$`50%`))+
   geom_point(data=dose_mice_male, aes(x=dose, y=mean))+
   geom_errorbar(data=dose_mice_male, aes(x=dose, ymin=mean-SD, ymax=mean+SD))+
-  ggtitle("Linear (27.0%)") +
+  ggtitle("Linear (26.9%)") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(text = element_text(size = 16)) +
@@ -500,8 +500,8 @@ doseresponse <- ggarrange(male_combine, female_combine,
 print(doseresponse)
 
 #posterior model average
-bmds_f <- read.csv("iverson-f-et-al-1995-female-bmds.csv")
-bmds_m <- read.csv("iverson-f-et-al-1995-male-bmds.csv")
+bmds_f <- read.csv("don-female-bmds.csv")
+bmds_m <- read.csv("don-male-bmds.csv")
 
 quantile(bmds_f$model_average, prob=c(0.5, 0.05, 0.95))
 quantile(bmds_m$model_average, prob=c(0.5, 0.05, 0.95))
@@ -511,7 +511,7 @@ bmds.average_f <- ggplot(bmds_f, aes(x=model_average)) + geom_density() +
   theme_classic() +
   theme(plot.title = element_text(hjust = 0.5),
         text = element_text(size = 16))+
-  annotate("text", x=0.22, y=1, label= "0.22 [0.14-0.30]", size=5) +
+  annotate("text", x=0.22, y=1, label= "0.22 [0.14-0.32]", size=5) +
   annotate("pointrange", x = 0.22, y = 0, xmin = quantile(bmds_f$model_average, prob=c(0.05)), xmax = quantile(bmds_f$model_average, prob=c(0.95)), size =1) +
   scale_x_continuous(limit=c(0,0.5), breaks=seq(0,0.5,by=0.1))+
   scale_y_continuous(breaks=seq(0,12,by=2))+
