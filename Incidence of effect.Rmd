@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 library(data.table)
 library(ggplot2)
+library(grid)
 library(ggpubr)
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -60,10 +61,10 @@ incBMR5 <- ggplot(incBMRconf)+
   geom_line(aes(x=d_H,y=`95%`),linetype="dotted",alpha=0.5)+
   xlab("DON dose (mg/kg-d)")+ylab("Population Incidence of 5% Decrease in Body Weight")+
   theme_bw()+
-  coord_cartesian(xlim=c(1e-5,1),ylim=c(0,1))+
+  coord_cartesian(xlim=c(1e-4,1),ylim=c(0,1))+
   scale_x_log10()+
   theme(text = element_text(size = 12))+
-  geom_vline(xintercept=0.00258, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")
 print(incBMR5)
 
 incBMR5.log <- ggplot(incBMRconf)+
@@ -73,12 +74,12 @@ incBMR5.log <- ggplot(incBMRconf)+
   geom_line(aes(x=d_H,y=`95%`),linetype="dotted",alpha=0.5)+
   xlab("DON dose (mg/kg-d)")+ylab("Population Incidence of 5% Decrease in Body Weight")+
   theme_bw()+
-  coord_cartesian(xlim=c(1e-5,1),ylim=c(1e-6,1))+
+  coord_cartesian(xlim=c(1e-4,1),ylim=c(2.5e-5,1))+
   scale_x_log10()+
   scale_y_log10()+
   theme(text = element_text(size = 12))+
-  geom_vline(xintercept=0.00258, linetype="dashed", color="red")+
-  geom_point(aes(x=0.00258, y=1e-2), color="red", size=3, shape=15)
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")+
+  geom_point(aes(x=0.00137, y=1e-2), color="red", size=3, shape=15)
 print(incBMR5.log)
 ```
 
@@ -205,7 +206,7 @@ percent01 <- ggplot(subset(yconf.df, poppct %in% "1%ile"))+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00258, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")
 print(percent01)
 
 percent50 <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
@@ -219,7 +220,7 @@ percent50 <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00258, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")
 print(percent50)
 
 percent99 <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
@@ -233,7 +234,7 @@ percent99 <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00258, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")
 print(percent99)
 
 ### Population mean
@@ -322,7 +323,7 @@ popmean <- ggplot(yconfmean)+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00258, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")
 print(popmean)
 
 doseresp.BMR5 <- ggarrange(incBMR5, incBMR5.log, labels = c("A","B"), nrow = 2, ncol = 1, font.label = list(size = 18))
@@ -356,22 +357,22 @@ incBMR5.be <- ggplot(incBMRconf)+
   geom_line(aes(x=be_H,y=`95%`),linetype="dotted",alpha=0.5)+
   xlab("Urinary biomonitoring equivalent (mg/kg-d)")+ylab("Population Incidence of 5% Decrease in Body Weight")+
   theme_bw()+
-  coord_cartesian(xlim=c(1e-5,1),ylim=c(0,1))+
+  coord_cartesian(xlim=c(5e-5,1),ylim=c(0,1))+
   scale_x_log10()+
   theme(text = element_text(size = 12))+
-  geom_vline(xintercept=0.00183, linetype="dashed", color="red")+
-  geom_vline(xintercept=2.424251e-05, linetype="dotted", color="yellow")+
-  geom_vline(xintercept=7.271856e-04, linetype="dotted", color="yellow")+
-  geom_vline(xintercept=1.338540e-04, linetype="solid", color="yellow")+
-  geom_rect(aes(xmin=2.424251e-05, xmax=7.271856e-04,ymin=1e-7,ymax=Inf), fill="yellow", alpha= 0.005)+
+  geom_vline(xintercept=0.00098, linetype="dashed", color="red")+
+  geom_vline(xintercept=2.508499e-05, linetype="dotted", color="darkgreen")+
+  geom_vline(xintercept=7.170922e-04, linetype="dotted", color="darkgreen")+
+  geom_vline(xintercept=1.346428e-04, linetype="solid", color="darkgreen")+
+  geom_rect(aes(xmin=2.508499e-05, xmax=7.170922e-04,ymin=1e-7,ymax=Inf), fill="darkgreen", alpha= 0.005)+
   geom_vline(xintercept=0.0001367598, linetype="dotted", color="brown")+
   geom_vline(xintercept=0.0053842140, linetype="dotted", color="brown")+
   geom_vline(xintercept=0.0008617678, linetype="solid", color="brown")+
   geom_rect(aes(xmin=0.0001367598, xmax=0.0053842140,ymin=1e-7,ymax=Inf), fill="brown", alpha= 0.005)+
-  geom_vline(xintercept=5.206034e-12, linetype="dotted", color="green")+
-  geom_vline(xintercept=1.546008e-04, linetype="dotted", color="green")+
-  geom_vline(xintercept=2.894175e-08, linetype="solid", color="green")+
-  geom_rect(aes(xmin=5.206034e-12, xmax=1.546008e-04,ymin=1e-7,ymax=Inf), fill="green", alpha= 0.005)
+  geom_vline(xintercept=4.251803e-12, linetype="dotted", color="darkblue")+
+  geom_vline(xintercept=1.565674e-04, linetype="dotted", color="darkblue")+
+  geom_vline(xintercept=2.841015e-08, linetype="solid", color="darkblue")+
+  geom_rect(aes(xmin=4.251803e-12, xmax=1.565674e-04,ymin=1e-7,ymax=Inf), fill="darkblue", alpha= 0.005)
 print(incBMR5.be)
 
 incBMR5.be.log <- ggplot(incBMRconf)+
@@ -381,28 +382,27 @@ incBMR5.be.log <- ggplot(incBMRconf)+
   geom_line(aes(x=be_H,y=`95%`),linetype="dotted",alpha=0.5)+
   xlab("Urinary biomonitoring equivalent (mg/kg-d)")+ylab("Population Incidence of 5% Decrease in Body Weight")+
   theme_bw()+
-  coord_cartesian(xlim=c(1e-5,1),ylim=c(1e-5,1))+
-  scale_x_log10()+
-  scale_y_log10()+
+  coord_cartesian(xlim=c(1e-4,1),ylim=c(0.00001,1))+
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  scale_y_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
   theme(text = element_text(size = 12))+
-  geom_vline(xintercept=0.00183, linetype="dashed", color="red")+
-  geom_point(aes(x=0.00183, y=1e-2), color="red", size=3, shape=15)+
-  geom_vline(xintercept=2.424251e-05, linetype="dotted", color="yellow")+
-  geom_vline(xintercept=7.271856e-04, linetype="dotted", color="yellow")+
-  geom_vline(xintercept=1.338540e-04, linetype="solid", color="yellow")+
-  geom_rect(aes(xmin=2.424251e-05, xmax=7.271856e-04,ymin=1e-7,ymax=Inf), fill="yellow", alpha= 0.005)+
-  geom_vline(xintercept=0.0001367598, linetype="dotted", color="brown")+
-  geom_vline(xintercept=0.0053842140, linetype="dotted", color="brown")+
-  geom_vline(xintercept=0.0008617678, linetype="solid", color="brown")+
-  geom_rect(aes(xmin=0.0001367598, xmax=0.0053842140,ymin=1e-7,ymax=Inf), fill="brown", alpha= 0.005)+
-  geom_vline(xintercept=5.206034e-12, linetype="dotted", color="green")+
-  geom_vline(xintercept=1.546008e-04, linetype="dotted", color="green")+
-  geom_vline(xintercept=2.894175e-08, linetype="solid", color="green")+
-  geom_rect(aes(xmin=5.206034e-12, xmax=1.546008e-04,ymin=1e-7,ymax=Inf), fill="green", alpha= 0.005)
-  #geom_vline(xintercept=7.694330e-07, linetype="dotted", color="darkblue")+
-  #geom_vline(xintercept=7.155839e-04, linetype="dotted", color="darkblue")+
-  #geom_vline(xintercept=2.436855e-05, linetype="solid", color="darkblue")+
-  #geom_rect(aes(xmin=7.694330e-07, xmax=7.155839e-04,ymin=1e-7,ymax=Inf), fill="darkblue", alpha= 0.005)
+  geom_vline(xintercept=0.00098, linetype="dashed", color="red")+
+  geom_point(aes(x=0.00098, y=1e-2), color="red", size=3, shape=15)+
+  geom_point(aes(x=7.170922e-04, y=5e-03), color="darkgreen", size=3, shape=9)+
+  geom_segment(aes(x=1.346428e-04,y=5e-03/2,xend=1.346428e-04,yend=5e-03*2),color="darkgreen",linetype="solid")+
+  geom_rect(aes(xmin=2.508499e-05, xmax=7.170922e-04,ymin=5e-03/2,ymax=5e-03*2), fill="darkgreen", alpha= 0.005)+ #ymax=y*2; ymin=y/2
+  geom_point(aes(x=0.0053842140, y=0.21), color="brown", size=3, shape=9)+
+  geom_segment(aes(x=0.0008617678,y=0.21/2,xend=0.0008617678,yend=0.21*2),color="brown",linetype="solid")+
+  geom_rect(aes(xmin=0.0001367598, xmax=0.0053842140,ymin=0.21/2, ymax=0.21*2), fill="brown", alpha= 0.005)+
+  geom_point(aes(x=1.565674e-04, y=6.55e-05), color="darkblue", size=3, shape=9)+
+  geom_segment(aes(x=2.841015e-08,y=6.55e-05/2,xend=2.841015e-08,yend=6.55e-05*2),color="darkblue",linetype="solid")+
+  geom_rect(aes(xmin=4.251803e-12, xmax=1.565674e-04,ymin=6.55e-05/2,ymax=6.55e-05*2), fill="darkblue", alpha= 0.005)+
+  annotation_logticks(sides="bl")+
+  annotate("text", label="Portuguese population",x=4e-04,y=0.015)+
+  annotate("text", label="Chinese population",x=0.0008,y=0.7)+
+  annotate("text", label="European population",x=4e-04,y=2e-04)
 print(incBMR5.be.log)
 ```
 
@@ -493,7 +493,7 @@ percent01.be <- ggplot(subset(yconf.df, poppct %in% "1%ile"))+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00183, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
 print(percent01.be)
 
 percent50.be <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
@@ -507,7 +507,7 @@ percent50.be <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00183, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
 print(percent50.be)
 
 percent99.be <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
@@ -521,7 +521,7 @@ percent99.be <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00183, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
 print(percent99.be)
 
 ### Population mean
@@ -610,7 +610,7 @@ popmean.be <- ggplot(yconfmean)+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00183, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
 print(popmean.be)
 
 ### Population random sample 
@@ -700,7 +700,7 @@ popran.be <- ggplot(yconfran)+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00183, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
 print(popran.be)
 
 ##combine graphs
@@ -738,15 +738,11 @@ incBMR5.b_be <- ggplot(b_incBMRconf)+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(0,1))+
   scale_x_log10()+
   theme(text = element_text(size = 12))+
-  geom_vline(xintercept=0.00031, linetype="dashed", color="red")+
-  geom_vline(xintercept=1.969793e-05, linetype="dotted", color="orange")+
-  geom_vline(xintercept=1.543985e-03, linetype="dotted", color="orange")+
-  geom_vline(xintercept=1.752785e-04, linetype="solid", color="orange")+
-  geom_rect(aes(xmin=1.969793e-05, xmax=1.543985e-03,ymin=1e-7,ymax=Inf), fill="orange", alpha= 0.005)+
-  geom_vline(xintercept=5.164453e-07, linetype="dotted", color="green")+
-  geom_vline(xintercept=3.022349e-04, linetype="dotted", color="green")+
-  geom_vline(xintercept=1.294155e-05, linetype="solid", color="green")+
-  geom_rect(aes(xmin=5.164453e-07, xmax=3.022349e-04,ymin=1e-7,ymax=Inf), fill="green", alpha= 0.005)
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")+
+  geom_vline(xintercept=5.164453e-07, linetype="dotted", color="darkblue")+
+  geom_vline(xintercept=3.022349e-04, linetype="dotted", color="darkblue")+
+  geom_vline(xintercept=1.294155e-05, linetype="solid", color="darkblue")+
+  geom_rect(aes(xmin=5.164453e-07, xmax=3.022349e-04,ymin=1e-7,ymax=Inf), fill="darkblue", alpha= 0.005)
 print(incBMR5.b_be)
 
 incBMR5.b_be.log <- ggplot(b_incBMRconf)+
@@ -756,20 +752,19 @@ incBMR5.b_be.log <- ggplot(b_incBMRconf)+
   geom_line(aes(x=b_be_H,y=`95%`),linetype="dotted",alpha=0.5)+
   xlab("Blood biomonitoring equivalent (mg/L)")+ylab("Population Incidence of 5% Decrease in Body Weight")+
   theme_bw()+
-  coord_cartesian(xlim=c(1e-5,1),ylim=c(1e-3,1))+
-  scale_x_log10()+
-  scale_y_log10()+
+  coord_cartesian(xlim=c(1e-4,1),ylim=c(3e-3,1))+
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  scale_y_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
   theme(text = element_text(size = 12))+
-  geom_vline(xintercept=0.00031, linetype="dashed", color="red")+
-  geom_point(aes(x=0.00031, y=1e-2), color="red", size=3, shape=15)+
-  geom_vline(xintercept=1.969793e-05, linetype="dotted", color="orange")+
-  geom_vline(xintercept=1.543985e-03, linetype="dotted", color="orange")+
-  geom_vline(xintercept=1.752785e-04, linetype="solid", color="orange")+
-  geom_rect(aes(xmin=1.969793e-05, xmax=1.543985e-03,ymin=1e-7,ymax=Inf), fill="orange", alpha= 0.005)+
-  geom_vline(xintercept=5.164453e-07, linetype="dotted", color="green")+
-  geom_vline(xintercept=3.022349e-04, linetype="dotted", color="green")+
-  geom_vline(xintercept=1.294155e-05, linetype="solid", color="green")+
-  geom_rect(aes(xmin=5.164453e-07, xmax=3.022349e-04,ymin=1e-7,ymax=Inf), fill="green", alpha= 0.005)
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")+
+  geom_point(aes(x=0.00017, y=1e-2), color="red", size=3, shape=15)+
+  geom_point(aes(x=3.022349e-04, y=0.045), color="darkblue", size=3, shape=9)+
+  geom_segment(aes(x=1.294155e-05,y=0.045/2,xend=1.294155e-05,yend=0.045*2),color="darkblue",linetype="solid")+
+  geom_rect(aes(xmin=5.164453e-07, xmax=3.022349e-04,ymin=0.045/2,ymax=0.045*2), fill="darkblue", alpha= 0.005)+
+  annotation_logticks(sides="bl")+
+  annotate("text", label="European population",x=4e-04,y=0.12)
 print(incBMR5.b_be.log)
 ```
 
@@ -860,7 +855,7 @@ percent01.b_be <- ggplot(subset(yconf.df, poppct %in% "1%ile"))+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00031, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")
 print(percent01.b_be)
 
 percent50.b_be <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
@@ -874,7 +869,7 @@ percent50.b_be <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00031, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")
 print(percent50.b_be)
 
 percent99.b_be <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
@@ -888,7 +883,7 @@ percent99.b_be <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00031, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")
 print(percent99.b_be)
 
 ### Population mean
@@ -977,7 +972,7 @@ popmean.b_be <- ggplot(yconfmean)+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(-25,0))+
   scale_x_log10()+
   theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00031, linetype="dashed", color="red")
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")
 print(popmean.b_be)
 
 ##combine graphs
@@ -993,7 +988,7 @@ blood_fracresp <- ggarrange(popmean.b_be, percent01.b_be, percent50.b_be, percen
 
 ```{r ggplot}
 popincidence <- ggarrange(incBMR5.log, incBMR5.b_be.log, incBMR5.be.log, nrow=1, ncol=3, labels = c("A","B","C"), font.label = list(size = 18))
-ggsave("Log scale Population Incidence of 5percent Decrease in Body Weight.pdf", plot=popincidence, scale=0.5, width=30, height=10)
+ggsave("Log scale Population Incidence of 5 percent Decrease in Body Weight.pdf", plot=popincidence, scale=0.5, width=30, height=10)
 ```
 
 ## % Change in body weight for different fraction of population
@@ -1006,7 +1001,7 @@ ggsave("Percent change in BW for fractions of population.pdf", plot=frac.pop, wi
 ## % Change in body weight; urine BE
 ```{r ggplot}
 bwchange <- ggarrange(popran.be, popmean.be, percent01.be, percent50.be, percent99.be, nrow = 5, ncol = 1)
-percchange <- ggarrange(bwchange, expboxplot, nrow=1, ncol=2, labels = c("A","B"), font.label = list(size = 18))
+percchange <- ggarrange(bwchange, expboxplot.port, nrow=1, ncol=2, labels = c("A","B"), font.label = list(size = 18))
 ggsave(percchange, file="Percent change in body weight BE and UE.pdf", width=20, height=24, scale=0.75)
 ```
 

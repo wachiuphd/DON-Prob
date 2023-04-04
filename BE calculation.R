@@ -18,9 +18,9 @@ cat("bmd",quantile(bmd,prob=c(0.5,0.05,0.95)),"\n")
 #Cavg_a
 #Cavg/dose = (AUC/dose)/24 hr
 #Cavg_a = bmd * (Cavg/dose)
-#Cavg_dose_a.GM <- 0.8/24
-#Cavg_dose_a.GSD <- 3^(1/1.96)
-Cavg_dose_a <- rlnorm(10000,meanlog = log(0.033), sdlog=log(1.75))
+#Cavg_dose_a.GM <- 0.3452886/24 =0.0144
+#Cavg_dose_a.GSD <- 1.987179^(1/1.96) = 1.42 
+Cavg_dose_a <- rlnorm(10000,meanlog = log(0.0144), sdlog=log(1.42))
 cat("Cavg_dose_a",quantile(Cavg_dose_a,prob=c(0.5,0.05,0.95)),"\n")
 AF_interTKblood <- 1/Cavg_dose_a
 cat("AF_interTKblood", quantile(AF_interTKblood,prob=c(0.5,0.05,0.95)),"\n")

@@ -8,6 +8,7 @@ dose_mice <- read.csv("iverson dose mice.csv")
 female_mice <- read.csv("don-female-parameters.csv")
 dose_mice_female <- dose_mice[5:8,]
 dose <- data.frame(dose=seq(from=0, to=2, by=0.04))
+set.seed(3.14159)
 
 #Exp 2
 #y=a*exp(b*dose)
@@ -253,6 +254,7 @@ print(female_combine)
 male_mice <- read.csv("don-male-parameters.csv")
 dose_mice_male <- dose_mice[1:4,]
 dose <- data.frame(dose=seq(from=0, to=2, by=0.04))
+set.seed(3.14159)
 
 #Exp 2
 #y=a*exp(b*dose)

@@ -31,7 +31,29 @@ cat("bmd",quantile(bmd,prob=c(0.5,0.05,0.95)),"\n")
 # ip dosing: AUC/dose = 1.64 which is the same as Clark et al. 2015 (1.64 mg-hr/L per mg/kg) in adult mice
 # AUC/dose = Fabs*1.64
 # Fabs = 0.8/1.64 =0.5 slightly lower than human value of 0.61 from posterior parameter
-AUC_dose_m <- rlnorm(10000,meanlog = log(0.8), sdlog=log(1.75))
+#AUC_dose_m <- rlnorm(10000,meanlog = log(0.8), sdlog=log(1.75))
+#cat("AUC_dose_m",quantile(AUC_dose_m,prob=c(0.5,0.05,0.95)),"\n")
+
+#Free/total DON adjustment
+#Saint-Cyr et al. 2015
+#Pig (26-28 kg > use 27 kg) Free AUC/Dose gavage = 1.972 ug-h/mL per mg/kg-d = 1.972 mg-h/L per mg/kg-d
+#Rat (120 – 150 g > use 0.135 kg) Free AUC/Dose gavage = 0.4881 ug-h/mL per mg/kg-d = 0.4881 mg-h/L per mg/kg-d
+#set lm function
+dat <- data.frame(bw=c(0.135,27),auc=c(0.4881,1.972))
+res <- lm(log(auc)~log(bw),data=dat)
+
+#Scale to Pestka mice (B6C3F1 females – subchronic BW = 0.0246 kg)
+newdata<-data.frame(bw=0.0246)
+pred <- exp(predict(res,newdata))
+#P95/P50: 0.62/0.312 = 1.987179
+#GSD = 1.987179^(1/1.96) in 95% CI = 1.42
+
+#Iverson et al. 1995 study: B6C3F1 mice average BW=(0.0373+0.0353)/2=0.0363
+iversonbw <- data.frame(bw=0.0363)
+pred.iverson <- exp(predict(res,iversonbw))
+#central value P50=0.3452886
+
+AUC_dose_m <- rlnorm(10000,meanlog = log(0.345), sdlog=log(1.42))
 cat("AUC_dose_m",quantile(AUC_dose_m,prob=c(0.5,0.05,0.95)),"\n")
 
 # Human from TK model
