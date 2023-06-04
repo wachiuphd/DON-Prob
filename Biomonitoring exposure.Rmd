@@ -10,41 +10,72 @@ library(data.table)
 library(ggplot2)
 library(ggpubr)
 library(reshape2)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## input data
 
 ```{r data}
-datafolder <- "InputData"
-don.urine <- fread(file.path(datafolder,"don exposure.csv"))
+don.urine <- fread(file.path("InputData","don exposure.csv"))
 BE.urine.df <- read.csv("Urine BE.samples.csv")
 BE.blood.df <- read.csv("Blood BE.samples.csv")
 ```
 
-## iMOE for Portuguese population
+##MOE
 
-```{r lognormal}
+```{r random}
 set.seed(1234)
+
+BE50 <- ((BE.urine.df$bmd/1000)*BE.urine.df$Cavg_dose_a*BE.urine.df$U_Cavg_h.GM) /BE.urine.df$AF_interTD
+sigma_intra <- log(BE.urine.df$Intra.GSD)
+
+#Martins et al. (2019)
 don.urine$exp <- don.urine$`PDI DON`*0.64
 urine.q <- quantile(don.urine$exp, prob=c(0.5,0.95))
 #Median: 0.134 ug/kg-d = 0.000134 mg/kg-d
 #P95: 1.014 ug/kg-d = 0.001014 mg/kg-d
 #P95/P50=7.567
 #GM: 0.000134; GSD: 7.567^(1/1.96)=2.808216
-ue <- rlnorm(10000, meanlog = log(0.000134), sdlog=log(2.808216))
-quantile(ue, prob=c(0.5, 0.05, 0.95))
+mar_exp <- rlnorm(10000, meanlog = log(0.000134), sdlog=log(2.808216))
+quantile(mar_exp, prob=c(0.5, 0.05, 0.95))
+sigma_marexp <- log(2.808216)
 
-moe <- BE.urine.df$BE.urine/ue
-p <- ecdf(log(moe))
+n <- 100000
+df <- data.frame(run=1:n, GM_moe=NA, GSD_moe=NA, zran=NA, sigma_intra=NA, MOE_1perc=NA, MOE_ran=NA, z_frac=NA)
+for(i in 1:n){
+  df$sigma_intra[i] <- sample(sigma_intra, 1, replace = TRUE)
+  df$GM_moe[i] <- sample(BE50, 1, replace = TRUE)/0.000134
+  df$GSD_moe[i] <- exp((df$sigma_intra[i]^2+sigma_marexp^2)^(1/2))
+  df$zran[i] <- rnorm(1)
+    
+  df$MOE_1perc[i] <- df$GM_moe[i] * df$GSD_moe[i]^qnorm(0.01) #z score=2.3
+  df$MOE_ran[i] <- df$GM_moe[i] * df$GSD_moe[i]^df$zran[i]
+  df$z_frac[i] <- -log(df$GM_moe[i])/log(df$GSD_moe[i]) #1 = GM_moe * GSD_moe^z; z=fraction of population%
+}
 
-p(1) #fraction
+df_quan <- apply(df[2:8], 2, quantile, prob=c(0.5, 0.05, 0.95))
+write.csv(df_quan, file="Martins et al (2019) population MOE quantile.csv")
 
-pdf("Margin of exposure.pdf", width=10, height=8)
-plot(p, main="Margin of Exposure")
-abline(v=p(1), col="red")
-mtext("fraction = 0.0116", side = 3)
+##Wang et al. (2019) exposure
+wang_exp <- rlnorm(10000, meanlog = log(0.0008572618), sdlog = log(3.09911))
+quantile(wang_exp, prob=c(0.5, 0.05, 0.95))
+sigma_wangexp <- log(3.09911)
 
-dev.off()
+n <- 100000
+df.w <- data.frame(run=1:n, GM_moe=NA, GSD_moe=NA, zran=NA, sigma_intra=NA, MOE_1perc=NA, MOE_ran=NA, z_frac=NA)
+for(i in 1:n){
+  df.w$sigma_intra[i] <- sample(sigma_intra, 1, replace = TRUE)
+  df.w$GM_moe[i] <- sample(BE50, 1, replace = TRUE)/0.0008572618
+  df.w$GSD_moe[i] <- exp((df.w$sigma_intra[i]^2+sigma_wangexp^2)^(1/2))
+  df.w$zran[i] <- rnorm(1)
+    
+  df.w$MOE_1perc[i] <- df.w$GM_moe[i] * df.w$GSD_moe[i]^qnorm(0.01)
+  df.w$MOE_ran[i] <- df.w$GM_moe[i] * df.w$GSD_moe[i]^df.w$zran[i]
+  df.w$z_frac[i] <- -log(df.w$GM_moe[i])/log(df.w$GSD_moe[i])
+}
+
+df.w_quan <- apply(df.w[2:8], 2, quantile, prob=c(0.5, 0.05, 0.95))
+write.csv(df.w_quan, file="Wang et al (2019) population MOE quantile.csv")
 ```
 
 #urine UEi
@@ -92,11 +123,12 @@ frachange.8 <- function(a,b,dose, dose.max = 1.5){
 }
 ```
 
-### Portuguese population random sample; urine
-Martins et al. (2019)
+### Martins et al. (2019)
 
 ```{r random}
 set.seed(1234)
+
+ue <- rlnorm(10000, meanlog = log(0.000134), sdlog=log(2.808216))
 
 yran<-numeric() # blank 
 npop <- length(ue)
@@ -166,7 +198,6 @@ for (j in 1:length(ue)) {
 }
 yran<-as.data.frame(yran)
 names(yran) <- paste("ue",1:length(ue),sep=".")
-write.csv(yran, file="Portuguese population UE fraction of response.csv", row.names=FALSE)
 
 yranpop <- as.data.frame(apply(yran, 1, sample, size=1))
 colnames(yranpop) <- "random"
@@ -177,32 +208,37 @@ colnames(ymean) <- "mean"
 y1perc <- as.data.frame(apply(yran,1,quantile,prob=0.01))
 colnames(y1perc) <- "1%pop"
 
+y5perc <- as.data.frame(apply(yran,1,quantile,prob=0.05))
+colnames(y5perc) <- "5%pop"
+
 ymed <- as.data.frame(apply(yran,1,quantile,prob=0.5))
 colnames(ymed) <- "50%pop"
+
+y95perc <- as.data.frame(apply(yran,1,quantile,prob=0.95))
+colnames(y95perc) <- "95%pop"
 
 y99perc <- as.data.frame(apply(yran,1,quantile,prob=0.99))
 colnames(y99perc) <- "99%pop"
 
-yran.df <- cbind(yranpop, ymean, y1perc, ymed, y99perc)
-write.csv(yran.df, file="Perc Portuguese population UE fraction of response.csv", row.names=FALSE)
+yran.df <- cbind(yranpop, ymean, y1perc, y5perc, ymed, y95perc, y99perc)
+write.csv(yran.df, file="Percent Martins et al (2019) population UE fraction of response.csv", row.names=FALSE)
 ```
 
-### Chinese population random sample; urine
-Wang et al. 2019
+### Wang et al. 2019
 
 ```{r random}
 set.seed(1234)
 
-Chi_ue <- rlnorm(10000, meanlog = log(0.0009247387), sdlog = log(1.967235))
+w_ue <- rlnorm(10000, meanlog = log(0.0008572618), sdlog = log(3.09911))
 
 yran<-numeric() # blank 
-npop <- length(Chi_ue)
+npop <- length(w_ue)
 zrand <- rnorm(npop) # npop random individuals
-for (j in 1:length(Chi_ue)) {
+for (j in 1:length(w_ue)) {
   y<-numeric() # blank 
   #for (k in 1:npop) {
     z_i <- zrand[j]
-    AED <- (Chi_ue[j] * BE.urine.df$AF_interTD * ((BE.urine.df$Intra.GSD)^z_i))/(BE.urine.df$Cavg_dose_a*BE.urine.df$U_Cavg_h.GM)
+    AED <- (w_ue[j] * BE.urine.df$AF_interTD * ((BE.urine.df$Intra.GSD)^z_i))/(BE.urine.df$Cavg_dose_a*BE.urine.df$U_Cavg_h.GM)
     
     #model weight
     w_k_female <- c(0.271, 0.077, 0.216, 0.052, 0.058, 0.031, 0.174, 0.12)
@@ -262,8 +298,7 @@ for (j in 1:length(Chi_ue)) {
   yran <- cbind(yran,y)
 }
 yran<-as.data.frame(yran)
-names(yran) <- paste("Chi_ue",1:length(Chi_ue),sep=".")
-write.csv(yran, file="Chinese population UE fraction of response.csv", row.names=FALSE)
+names(yran) <- paste("w_ue",1:length(w_ue),sep=".")
 
 yranpop <- as.data.frame(apply(yran, 1, sample, size=1))
 colnames(yranpop) <- "random"
@@ -274,311 +309,23 @@ colnames(ymean) <- "mean"
 y1perc <- as.data.frame(apply(yran,1,quantile,prob=0.01))
 colnames(y1perc) <- "1%pop"
 
-ymed <- as.data.frame(apply(yran,1,quantile,prob=0.5))
-colnames(ymed) <- "50%pop"
-
-y99perc <- as.data.frame(apply(yran,1,quantile,prob=0.99))
-colnames(y99perc) <- "99%pop"
-
-yran.df <- cbind(yranpop, ymean, y1perc, ymed, y99perc)
-write.csv(yran.df, file="Perc Chinese population UE fraction of response.csv", row.names=FALSE)
-```
-
-### European population random sample; urine (full distribution)
-Ruyck et al. 2020
-
-```{r random}
-set.seed(1234)
-
-eu_ue <- rlnorm(10000, meanlog = log(2.823962e-08), sdlog = log(200.1008))
-
-yran<-numeric() # blank 
-npop <- length(eu_ue)
-zrand <- rnorm(npop) # npop random individuals
-for (j in 1:length(eu_ue)) {
-  y<-numeric() # blank 
-  #for (k in 1:npop) {
-    z_i <- zrand[j]
-    AED <- (eu_ue[j] * BE.urine.df$AF_interTD * ((BE.urine.df$Intra.GSD)^z_i))/(BE.urine.df$Cavg_dose_a*BE.urine.df$U_Cavg_h.GM)
-    
-    #model weight
-    w_k_female <- c(0.271, 0.077, 0.216, 0.052, 0.058, 0.031, 0.174, 0.12)
-    w_k_female <- w_k_female/sum(w_k_female) # Make sure adds up to 1
-    w_k_female_cum <- cumsum(w_k_female) # Cumulative
-    w_k_male <- c(0.224, 0.12, 0.09, 0.064, 0.065, 0.11, 0.058, 0.27)
-    w_k_male <- w_k_male/sum(w_k_male) # Make sure adds up to 1
-    w_k_male_cum <- cumsum(w_k_male) # Cumulative
-    
-    w_k5000_female_cum <- c(0,round(5000*w_k_female_cum)) # start/end index numbers
-    w_k5000_male_cum <- 5000+c(0,round(5000*w_k_male_cum)) # start/end index numbers
-    
-    w_k5000_female <- diff(w_k5000_female_cum) # Difference is size
-    w_k5000_male <- diff(w_k5000_male_cum) # Difference is size
-    
-    samp.parms.1 <- female_mice[sample(c(1:15000), size=w_k5000_female[1]),]
-    samp.parms.2 <- female_mice[sample(c(15001:30000), size=w_k5000_female[2]),]
-    samp.parms.3 <- female_mice[sample(c(30001:45000), size=w_k5000_female[3]),]
-    samp.parms.4 <- female_mice[sample(c(45001:60000), size=w_k5000_female[4]),]
-    samp.parms.5 <- female_mice[sample(c(60001:75000), size=w_k5000_female[5]),]
-    samp.parms.6 <- female_mice[sample(c(75001:90000), size=w_k5000_female[6]),]
-    samp.parms.7 <- female_mice[sample(c(90001:105000), size=w_k5000_female[7]),]
-    samp.parms.8 <- female_mice[sample(c(105001:120000), size=w_k5000_female[8]),]
-    
-    # Use subsamples of AED
-    y_female <- c(
-      frachange.1(a=samp.parms.1$a, b=samp.parms.1$b, dose=AED[(1+w_k5000_female_cum[1]):w_k5000_female_cum[2]])
-      ,frachange.2(a=samp.parms.2$a, b=samp.parms.2$b, g=samp.parms.2$g, dose=AED[(1+w_k5000_female_cum[2]):w_k5000_female_cum[3]])
-      ,frachange.3(a=samp.parms.3$a, b=samp.parms.3$b, c=samp.parms.3$c, dose=AED[(1+w_k5000_female_cum[3]):w_k5000_female_cum[4]])
-      ,frachange.4(a=samp.parms.4$a, b=samp.parms.4$b, c=samp.parms.4$c, g=samp.parms.4$g, dose=AED[(1+w_k5000_female_cum[4]):w_k5000_female_cum[5]])
-      ,frachange.5(a=samp.parms.5$a, b=samp.parms.5$b, c=samp.parms.5$c, g=samp.parms.5$g, dose=AED[(1+w_k5000_female_cum[5]):w_k5000_female_cum[6]])
-      ,frachange.6(a=samp.parms.6$a, b=samp.parms.6$b, g=samp.parms.6$g, dose=AED[(1+w_k5000_female_cum[6]):w_k5000_female_cum[7]])
-      ,frachange.7(a=samp.parms.7$a, b=samp.parms.7$b, c=samp.parms.7$c, dose=AED[(1+w_k5000_female_cum[7]):w_k5000_female_cum[8]])
-      ,frachange.8(a=samp.parms.8$a, b=samp.parms.8$b, dose=AED[(1+w_k5000_female_cum[8]):w_k5000_female_cum[9]])
-    )
-    
-    samp.parms.1 <- male_mice[sample(c(1:15000), size=w_k5000_male[1]),]
-    samp.parms.2 <- male_mice[sample(c(15001:30000), size=w_k5000_male[2]),]
-    samp.parms.3 <- male_mice[sample(c(30001:45000), size=w_k5000_male[3]),]
-    samp.parms.4 <- male_mice[sample(c(45001:60000), size=w_k5000_male[4]),]
-    samp.parms.5 <- male_mice[sample(c(60001:75000), size=w_k5000_male[5]),]
-    samp.parms.6 <- male_mice[sample(c(75001:90000), size=w_k5000_male[6]),]
-    samp.parms.7 <- male_mice[sample(c(90001:105000), size=w_k5000_male[7]),]
-    samp.parms.8 <- male_mice[sample(c(105001:120000), size=w_k5000_male[8]),]
-    
-    y_male <- c(
-      frachange.1(a=samp.parms.1$a, b=samp.parms.1$b, dose=AED[(1+w_k5000_male_cum[1]):w_k5000_male_cum[2]])
-      ,frachange.2(a=samp.parms.2$a, b=samp.parms.2$b, g=samp.parms.2$g, dose=AED[(1+w_k5000_male_cum[2]):w_k5000_male_cum[3]])
-      ,frachange.3(a=samp.parms.3$a, b=samp.parms.3$b, c=samp.parms.3$c, dose=AED[(1+w_k5000_male_cum[3]):w_k5000_male_cum[4]])
-      ,frachange.4(a=samp.parms.4$a, b=samp.parms.4$b, c=samp.parms.4$c, g=samp.parms.4$g, dose=AED[(1+w_k5000_male_cum[4]):w_k5000_male_cum[5]])
-      ,frachange.5(a=samp.parms.5$a, b=samp.parms.5$b, c=samp.parms.5$c, g=samp.parms.5$g, dose=AED[(1+w_k5000_male_cum[5]):w_k5000_male_cum[6]])
-      ,frachange.6(a=samp.parms.6$a, b=samp.parms.6$b, g=samp.parms.6$g, dose=AED[(1+w_k5000_male_cum[6]):w_k5000_male_cum[7]])
-      ,frachange.7(a=samp.parms.7$a, b=samp.parms.7$b, c=samp.parms.7$c, dose=AED[(1+w_k5000_male_cum[7]):w_k5000_male_cum[8]])
-      ,frachange.8(a=samp.parms.8$a, b=samp.parms.8$b, dose=AED[(1+w_k5000_male_cum[8]):w_k5000_male_cum[9]])
-    )
-    y <- c(y_female,y_male)
-  yran <- cbind(yran,y)
-}
-yran<-as.data.frame(yran)
-names(yran) <- paste("eu_ue",1:length(eu_ue),sep=".")
-write.csv(yran, file="European population UE fraction of response.csv", row.names=FALSE)
-
-yranpop <- as.data.frame(apply(yran, 1, sample, size=1))
-colnames(yranpop) <- "random"
-
-ymean <- as.data.frame(apply(yran,1,mean))
-colnames(ymean) <- "mean"
-
-y1perc <- as.data.frame(apply(yran,1,quantile,prob=0.01))
-colnames(y1perc) <- "1%pop"
+y5perc <- as.data.frame(apply(yran,1,quantile,prob=0.05))
+colnames(y5perc) <- "5%pop"
 
 ymed <- as.data.frame(apply(yran,1,quantile,prob=0.5))
 colnames(ymed) <- "50%pop"
 
-y99perc <- as.data.frame(apply(yran,1,quantile,prob=0.99))
-colnames(y99perc) <- "99%pop"
-
-yran.df <- cbind(yranpop, ymean, y1perc, ymed, y99perc)
-write.csv(yran.df, file="Perc European population UE fraction of response.csv", row.names=FALSE)
-```
-
-
-### European population random sample; serum (full distribution)
-Ruyck et al. 2020
-
-```{r random}
-set.seed(1234)
-
-eu_fullse <- rlnorm(10000, meanlog = log(1.291308e-05), sdlog = log(6.945195))
-
-yran<-numeric() # blank 
-npop <- length(eu_fullse)
-zrand <- rnorm(npop) # npop random individuals
-for (j in 1:length(eu_fullse)) {
-  y<-numeric() # blank 
-  #for (k in 1:npop) {
-    z_i <- zrand[j]
-    AED <- (eu_fullse[j] * BE.blood.df$AF_interTD * (BE.blood.df$TD_var.GSD^z_i))/(BE.blood.df$Cavg_dose_a)
-    
-    #model weight
-    w_k_female <- c(0.271, 0.077, 0.216, 0.052, 0.058, 0.031, 0.174, 0.12)
-    w_k_female <- w_k_female/sum(w_k_female) # Make sure adds up to 1
-    w_k_female_cum <- cumsum(w_k_female) # Cumulative
-    w_k_male <- c(0.224, 0.12, 0.09, 0.064, 0.065, 0.11, 0.058, 0.27)
-    w_k_male <- w_k_male/sum(w_k_male) # Make sure adds up to 1
-    w_k_male_cum <- cumsum(w_k_male) # Cumulative
-    
-    w_k5000_female_cum <- c(0,round(5000*w_k_female_cum)) # start/end index numbers
-    w_k5000_male_cum <- 5000+c(0,round(5000*w_k_male_cum)) # start/end index numbers
-    
-    w_k5000_female <- diff(w_k5000_female_cum) # Difference is size
-    w_k5000_male <- diff(w_k5000_male_cum) # Difference is size
-    
-    samp.parms.1 <- female_mice[sample(c(1:15000), size=w_k5000_female[1]),]
-    samp.parms.2 <- female_mice[sample(c(15001:30000), size=w_k5000_female[2]),]
-    samp.parms.3 <- female_mice[sample(c(30001:45000), size=w_k5000_female[3]),]
-    samp.parms.4 <- female_mice[sample(c(45001:60000), size=w_k5000_female[4]),]
-    samp.parms.5 <- female_mice[sample(c(60001:75000), size=w_k5000_female[5]),]
-    samp.parms.6 <- female_mice[sample(c(75001:90000), size=w_k5000_female[6]),]
-    samp.parms.7 <- female_mice[sample(c(90001:105000), size=w_k5000_female[7]),]
-    samp.parms.8 <- female_mice[sample(c(105001:120000), size=w_k5000_female[8]),]
-    
-    # Use subsamples of AED
-    y_female <- c(
-      frachange.1(a=samp.parms.1$a, b=samp.parms.1$b, dose=AED[(1+w_k5000_female_cum[1]):w_k5000_female_cum[2]])
-      ,frachange.2(a=samp.parms.2$a, b=samp.parms.2$b, g=samp.parms.2$g, dose=AED[(1+w_k5000_female_cum[2]):w_k5000_female_cum[3]])
-      ,frachange.3(a=samp.parms.3$a, b=samp.parms.3$b, c=samp.parms.3$c, dose=AED[(1+w_k5000_female_cum[3]):w_k5000_female_cum[4]])
-      ,frachange.4(a=samp.parms.4$a, b=samp.parms.4$b, c=samp.parms.4$c, g=samp.parms.4$g, dose=AED[(1+w_k5000_female_cum[4]):w_k5000_female_cum[5]])
-      ,frachange.5(a=samp.parms.5$a, b=samp.parms.5$b, c=samp.parms.5$c, g=samp.parms.5$g, dose=AED[(1+w_k5000_female_cum[5]):w_k5000_female_cum[6]])
-      ,frachange.6(a=samp.parms.6$a, b=samp.parms.6$b, g=samp.parms.6$g, dose=AED[(1+w_k5000_female_cum[6]):w_k5000_female_cum[7]])
-      ,frachange.7(a=samp.parms.7$a, b=samp.parms.7$b, c=samp.parms.7$c, dose=AED[(1+w_k5000_female_cum[7]):w_k5000_female_cum[8]])
-      ,frachange.8(a=samp.parms.8$a, b=samp.parms.8$b, dose=AED[(1+w_k5000_female_cum[8]):w_k5000_female_cum[9]])
-    )
-    
-    samp.parms.1 <- male_mice[sample(c(1:15000), size=w_k5000_male[1]),]
-    samp.parms.2 <- male_mice[sample(c(15001:30000), size=w_k5000_male[2]),]
-    samp.parms.3 <- male_mice[sample(c(30001:45000), size=w_k5000_male[3]),]
-    samp.parms.4 <- male_mice[sample(c(45001:60000), size=w_k5000_male[4]),]
-    samp.parms.5 <- male_mice[sample(c(60001:75000), size=w_k5000_male[5]),]
-    samp.parms.6 <- male_mice[sample(c(75001:90000), size=w_k5000_male[6]),]
-    samp.parms.7 <- male_mice[sample(c(90001:105000), size=w_k5000_male[7]),]
-    samp.parms.8 <- male_mice[sample(c(105001:120000), size=w_k5000_male[8]),]
-    
-    y_male <- c(
-      frachange.1(a=samp.parms.1$a, b=samp.parms.1$b, dose=AED[(1+w_k5000_male_cum[1]):w_k5000_male_cum[2]])
-      ,frachange.2(a=samp.parms.2$a, b=samp.parms.2$b, g=samp.parms.2$g, dose=AED[(1+w_k5000_male_cum[2]):w_k5000_male_cum[3]])
-      ,frachange.3(a=samp.parms.3$a, b=samp.parms.3$b, c=samp.parms.3$c, dose=AED[(1+w_k5000_male_cum[3]):w_k5000_male_cum[4]])
-      ,frachange.4(a=samp.parms.4$a, b=samp.parms.4$b, c=samp.parms.4$c, g=samp.parms.4$g, dose=AED[(1+w_k5000_male_cum[4]):w_k5000_male_cum[5]])
-      ,frachange.5(a=samp.parms.5$a, b=samp.parms.5$b, c=samp.parms.5$c, g=samp.parms.5$g, dose=AED[(1+w_k5000_male_cum[5]):w_k5000_male_cum[6]])
-      ,frachange.6(a=samp.parms.6$a, b=samp.parms.6$b, g=samp.parms.6$g, dose=AED[(1+w_k5000_male_cum[6]):w_k5000_male_cum[7]])
-      ,frachange.7(a=samp.parms.7$a, b=samp.parms.7$b, c=samp.parms.7$c, dose=AED[(1+w_k5000_male_cum[7]):w_k5000_male_cum[8]])
-      ,frachange.8(a=samp.parms.8$a, b=samp.parms.8$b, dose=AED[(1+w_k5000_male_cum[8]):w_k5000_male_cum[9]])
-    )
-    y <- c(y_female,y_male)
-  yran <- cbind(yran,y)
-}
-yran<-as.data.frame(yran)
-names(yran) <- paste("Eu_fullse",1:length(eu_fullse),sep=".")
-write.csv(yran, file="European population full distribution serum fraction of response.csv", row.names=FALSE)
-
-yranpop <- as.data.frame(apply(yran, 1, sample, size=1))
-colnames(yranpop) <- "random"
-
-ymean <- as.data.frame(apply(yran,1,mean))
-colnames(ymean) <- "mean"
-
-y1perc <- as.data.frame(apply(yran,1,quantile,prob=0.01))
-colnames(y1perc) <- "1%pop"
-
-ymed <- as.data.frame(apply(yran,1,quantile,prob=0.5))
-colnames(ymed) <- "50%pop"
+y95perc <- as.data.frame(apply(yran,1,quantile,prob=0.95))
+colnames(y95perc) <- "95%pop"
 
 y99perc <- as.data.frame(apply(yran,1,quantile,prob=0.99))
 colnames(y99perc) <- "99%pop"
 
-yran.df <- cbind(yranpop, ymean, y1perc, ymed, y99perc)
-write.csv(yran.df, file="Perc European population full distribution serum fraction of response.csv", row.names=FALSE)
+yran.df <- cbind(yranpop, ymean, y1perc, y5perc, ymed, y95perc, y99perc)
+write.csv(yran.df, file="Percent Wang et al (2019) population UE fraction of response.csv", row.names=FALSE)
 ```
 
-
-### European population random sample; detected serum
-Ruyck et al. 2020
-
-```{r random}
-set.seed(1234)
-
-eu_se <- rlnorm(10000, meanlog = log(0.0001741907), sdlog = log(3.831186))
-
-yran<-numeric() # blank 
-npop <- length(eu_se)
-zrand <- rnorm(npop) # npop random individuals
-for (j in 1:length(eu_se)) {
-  y<-numeric() # blank 
-  #for (k in 1:npop) {
-    z_i <- zrand[j]
-    AED <- (eu_se[j] * BE.blood.df$AF_interTD * (BE.blood.df$TD_var.GSD^z_i))/(BE.blood.df$Cavg_dose_a)
-    
-    #model weight
-    w_k_female <- c(0.271, 0.077, 0.216, 0.052, 0.058, 0.031, 0.174, 0.12)
-    w_k_female <- w_k_female/sum(w_k_female) # Make sure adds up to 1
-    w_k_female_cum <- cumsum(w_k_female) # Cumulative
-    w_k_male <- c(0.224, 0.12, 0.09, 0.064, 0.065, 0.11, 0.058, 0.27)
-    w_k_male <- w_k_male/sum(w_k_male) # Make sure adds up to 1
-    w_k_male_cum <- cumsum(w_k_male) # Cumulative
-    
-    w_k5000_female_cum <- c(0,round(5000*w_k_female_cum)) # start/end index numbers
-    w_k5000_male_cum <- 5000+c(0,round(5000*w_k_male_cum)) # start/end index numbers
-    
-    w_k5000_female <- diff(w_k5000_female_cum) # Difference is size
-    w_k5000_male <- diff(w_k5000_male_cum) # Difference is size
-    
-    samp.parms.1 <- female_mice[sample(c(1:15000), size=w_k5000_female[1]),]
-    samp.parms.2 <- female_mice[sample(c(15001:30000), size=w_k5000_female[2]),]
-    samp.parms.3 <- female_mice[sample(c(30001:45000), size=w_k5000_female[3]),]
-    samp.parms.4 <- female_mice[sample(c(45001:60000), size=w_k5000_female[4]),]
-    samp.parms.5 <- female_mice[sample(c(60001:75000), size=w_k5000_female[5]),]
-    samp.parms.6 <- female_mice[sample(c(75001:90000), size=w_k5000_female[6]),]
-    samp.parms.7 <- female_mice[sample(c(90001:105000), size=w_k5000_female[7]),]
-    samp.parms.8 <- female_mice[sample(c(105001:120000), size=w_k5000_female[8]),]
-    
-    # Use subsamples of AED
-    y_female <- c(
-      frachange.1(a=samp.parms.1$a, b=samp.parms.1$b, dose=AED[(1+w_k5000_female_cum[1]):w_k5000_female_cum[2]])
-      ,frachange.2(a=samp.parms.2$a, b=samp.parms.2$b, g=samp.parms.2$g, dose=AED[(1+w_k5000_female_cum[2]):w_k5000_female_cum[3]])
-      ,frachange.3(a=samp.parms.3$a, b=samp.parms.3$b, c=samp.parms.3$c, dose=AED[(1+w_k5000_female_cum[3]):w_k5000_female_cum[4]])
-      ,frachange.4(a=samp.parms.4$a, b=samp.parms.4$b, c=samp.parms.4$c, g=samp.parms.4$g, dose=AED[(1+w_k5000_female_cum[4]):w_k5000_female_cum[5]])
-      ,frachange.5(a=samp.parms.5$a, b=samp.parms.5$b, c=samp.parms.5$c, g=samp.parms.5$g, dose=AED[(1+w_k5000_female_cum[5]):w_k5000_female_cum[6]])
-      ,frachange.6(a=samp.parms.6$a, b=samp.parms.6$b, g=samp.parms.6$g, dose=AED[(1+w_k5000_female_cum[6]):w_k5000_female_cum[7]])
-      ,frachange.7(a=samp.parms.7$a, b=samp.parms.7$b, c=samp.parms.7$c, dose=AED[(1+w_k5000_female_cum[7]):w_k5000_female_cum[8]])
-      ,frachange.8(a=samp.parms.8$a, b=samp.parms.8$b, dose=AED[(1+w_k5000_female_cum[8]):w_k5000_female_cum[9]])
-    )
-    
-    samp.parms.1 <- male_mice[sample(c(1:15000), size=w_k5000_male[1]),]
-    samp.parms.2 <- male_mice[sample(c(15001:30000), size=w_k5000_male[2]),]
-    samp.parms.3 <- male_mice[sample(c(30001:45000), size=w_k5000_male[3]),]
-    samp.parms.4 <- male_mice[sample(c(45001:60000), size=w_k5000_male[4]),]
-    samp.parms.5 <- male_mice[sample(c(60001:75000), size=w_k5000_male[5]),]
-    samp.parms.6 <- male_mice[sample(c(75001:90000), size=w_k5000_male[6]),]
-    samp.parms.7 <- male_mice[sample(c(90001:105000), size=w_k5000_male[7]),]
-    samp.parms.8 <- male_mice[sample(c(105001:120000), size=w_k5000_male[8]),]
-    
-    y_male <- c(
-      frachange.1(a=samp.parms.1$a, b=samp.parms.1$b, dose=AED[(1+w_k5000_male_cum[1]):w_k5000_male_cum[2]])
-      ,frachange.2(a=samp.parms.2$a, b=samp.parms.2$b, g=samp.parms.2$g, dose=AED[(1+w_k5000_male_cum[2]):w_k5000_male_cum[3]])
-      ,frachange.3(a=samp.parms.3$a, b=samp.parms.3$b, c=samp.parms.3$c, dose=AED[(1+w_k5000_male_cum[3]):w_k5000_male_cum[4]])
-      ,frachange.4(a=samp.parms.4$a, b=samp.parms.4$b, c=samp.parms.4$c, g=samp.parms.4$g, dose=AED[(1+w_k5000_male_cum[4]):w_k5000_male_cum[5]])
-      ,frachange.5(a=samp.parms.5$a, b=samp.parms.5$b, c=samp.parms.5$c, g=samp.parms.5$g, dose=AED[(1+w_k5000_male_cum[5]):w_k5000_male_cum[6]])
-      ,frachange.6(a=samp.parms.6$a, b=samp.parms.6$b, g=samp.parms.6$g, dose=AED[(1+w_k5000_male_cum[6]):w_k5000_male_cum[7]])
-      ,frachange.7(a=samp.parms.7$a, b=samp.parms.7$b, c=samp.parms.7$c, dose=AED[(1+w_k5000_male_cum[7]):w_k5000_male_cum[8]])
-      ,frachange.8(a=samp.parms.8$a, b=samp.parms.8$b, dose=AED[(1+w_k5000_male_cum[8]):w_k5000_male_cum[9]])
-    )
-    y <- c(y_female,y_male)
-  yran <- cbind(yran,y)
-}
-yran<-as.data.frame(yran)
-names(yran) <- paste("Eu_se",1:length(eu_se),sep=".")
-write.csv(yran, file="European population serum fraction of response.csv", row.names=FALSE)
-
-yranpop <- as.data.frame(apply(yran, 1, sample, size=1))
-colnames(yranpop) <- "random"
-
-ymean <- as.data.frame(apply(yran,1,mean))
-colnames(ymean) <- "mean"
-
-y1perc <- as.data.frame(apply(yran,1,quantile,prob=0.01))
-colnames(y1perc) <- "1%pop"
-
-ymed <- as.data.frame(apply(yran,1,quantile,prob=0.5))
-colnames(ymed) <- "50%pop"
-
-y99perc <- as.data.frame(apply(yran,1,quantile,prob=0.99))
-colnames(y99perc) <- "99%pop"
-
-yran.df <- cbind(yranpop, ymean, y1perc, ymed, y99perc)
-write.csv(yran.df, file="Perc European population detected serum fraction of response.csv", row.names=FALSE)
-```
-
-
-#density plot (Portuguese population)
+#density plot (Martins et al. 2019)
 
 ```{r ggplot}
 random <- ggplot(yran.df, aes(x=random))+
@@ -617,121 +364,77 @@ perc99 <- ggplot(yran.df, aes(x=`99%pop`))+
   theme(axis.title.y = element_blank())
 
 frac <- ggarrange(random, mean, perc01, perc50, perc99, nrow=5, ncol=1)
-ggsave(frac, file = "Density plot_Fraction of response.pdf", width=8, height=10)
+ggsave(frac, file = "Martins et al (2019) Density plot_Fraction of response.pdf", width=8, height=10)
 ```
 
 #quantile
 
 ```{r quantile}
-###Portuguese
-yran.df.port <- read.csv("Perc Portuguese population UE fraction of response.csv")
-quan.port <- apply(yran.df.port, 2, quantile, prob=c(0.5, 0.05, 0.95))
-write.csv(quan.port, file="Quantiles of Perc population UE fraction of response.csv")
+###Martins et al (2019)
+yran.df.mar <- read.csv("Percent Martins et al (2019) population UE fraction of response.csv")
+quan.mar <- apply(yran.df.mar, 2, quantile, prob=c(0.5, 0.05, 0.95))
+write.csv(quan.mar, file="Quantiles of Martins et al (2019) population UE fraction of response.csv")
 
-###Chinese
-yran.df.chi <- read.csv("Perc Chinese population UE fraction of response.csv")
-quan.chi <- apply(yran.df.chi, 2, quantile, prob=c(0.5, 0.05, 0.95))
-write.csv(quan.chi, file="Quantiles of Chinese population UE fraction of response.csv")
-
-###European
-yran.df.eu <- read.csv("Perc European population UE fraction of response.csv")
-quan.eu <- apply(yran.df.eu, 2, quantile, prob=c(0.5, 0.05, 0.95))
-write.csv(quan.eu, file="Quantiles of European population UE fraction of response.csv")
-
-yran.df.euserum <- read.csv("Perc European population full distribution serum fraction of response.csv")
-quan.euserum <- apply(yran.df.euserum, 2, quantile, prob=c(0.5, 0.05, 0.95))
-write.csv(quan.euserum, file="Quantiles of European population serum fraction of response.csv")
+###Wang et al (2019)
+yran.df.wang <- read.csv("Percent Wang et al (2019) population UE fraction of response.csv")
+quan.wang <- apply(yran.df.wang, 2, quantile, prob=c(0.5, 0.05, 0.95))
+write.csv(quan.wang, file="Quantiles of Wang et al (2019) population UE fraction of response.csv")
 ```
 
 ##boxplot
 
 ```{r ggplot}
-###Portuguese
-yran.df.port <- read.csv("Perc Portuguese population UE fraction of response.csv")
-melt.yran.port <- melt(yran.df.port[,1:5])
+###Martins et al (2019)
+yran.df.mar <- read.csv("Percent Martins et al (2019) population UE fraction of response.csv")
+melt.yran.mar <- melt(yran.df.mar[,1:7])
 
-expboxplot.port <- ggplot(melt.yran.port, aes(x=value, y=variable))+
+expboxplot.mar <- ggplot(melt.yran.mar, aes(x=value, y=variable))+
   geom_boxplot(aes(fill=variable),
                outlier.shape=NA,
                show.legend = FALSE)+
   scale_x_continuous(limits=c(-0.1,0), breaks = c(-0.10,-0.05, 0), labels = c("-10%","-5%","0"))+
-  scale_y_discrete(limits=rev, labels = c("population 99%","population median","populaion 1%","population mean","random individual"))+
+  scale_y_discrete(limits=rev, labels = c("population 99%","population 95%","population median","population 5%","populaion 1%","population mean","random individual"))+
   theme_bw()+
   xlab("fraction of response (% BW change)")+
   theme(axis.title.y = element_blank())+
   geom_vline(xintercept = -0.05, linetype="dashed", color="red")
 
-ggsave(expboxplot.port, file="Boxplot Portuguese population UE Fraction of response.pdf", width=8, height=10)
+ggsave(expboxplot.mar, file="Boxplot Martins et al (2019) population UE Fraction of response.pdf", width=8, height=10)
 
-###Chinese
-yran.df.chi <- read.csv("Perc Chinese population UE fraction of response.csv")
-melt.yran.chi <- melt(yran.df.chi[,1:5])
+###Wang et al (2019)
+yran.df.wang <- read.csv("Percent Wang et al (2019) population UE fraction of response.csv")
+melt.yran.wang <- melt(yran.df.wang[,1:7])
 
-expboxplot.chi <- ggplot(melt.yran.chi, aes(x=value, y=variable))+
+expboxplot.wang <- ggplot(melt.yran.wang, aes(x=value, y=variable))+
   geom_boxplot(aes(fill=variable),
                outlier.shape=NA,
                show.legend = FALSE)+
   scale_x_continuous(limits=c(-0.1,0), breaks = c(-0.10,-0.05, 0), labels = c("-10%","-5%","0"))+
-  scale_y_discrete(limits=rev, labels = c("population 99%","population median","populaion 1%","population mean","random individual"))+
+  scale_y_discrete(limits=rev, labels = c("population 99%","population 95%","population median","population 5%","populaion 1%","population mean","random individual"))+
   theme_bw()+
   xlab("fraction of response (% BW change)")+
   theme(axis.title.y = element_blank())+
   geom_vline(xintercept = -0.05, linetype="dashed", color="red")
 
-ggsave(expboxplot.chi, file="Boxplot Chinese population UE Fraction of response.pdf", width=8, height=10)
-
-###European urine
-yran.df.eu <- read.csv("Perc European population UE fraction of response.csv")
-melt.yran.eu <- melt(yran.df.eu[,1:5])
-
-expboxplot.eu <- ggplot(melt.yran.eu, aes(x=value, y=variable))+
-  geom_boxplot(aes(fill=variable),
-               outlier.shape=NA,
-               show.legend = FALSE)+
-  scale_x_continuous(limits=c(-0.1,0), breaks = c(-0.10,-0.05, 0), labels = c("-10%","-5%","0"))+
-  scale_y_discrete(limits=rev, labels = c("population 99%","population median","populaion 1%","population mean","random individual"))+
-  theme_bw()+
-  xlab("fraction of response (% BW change)")+
-  theme(axis.title.y = element_blank())+
-  geom_vline(xintercept = -0.05, linetype="dashed", color="red")
-
-ggsave(expboxplot.eu, file="Boxplot European population UE Fraction of response.pdf", width=8, height=10)
-
-###European serum
-yran.df.euserum <- read.csv("Perc European population full distribution serum fraction of response.csv")
-melt.yran.euserum <- melt(yran.df.euserum[,1:5])
-
-expboxplot.euserum <- ggplot(melt.yran.euserum, aes(x=value, y=variable))+
-  geom_boxplot(aes(fill=variable),
-               outlier.shape=NA,
-               show.legend = FALSE)+
-  scale_x_continuous(limits=c(-0.1,0), breaks = c(-0.10,-0.05, 0), labels = c("-10%","-5%","0"))+
-  scale_y_discrete(limits=rev, labels = c("population 99%","population median","populaion 1%","population mean","random individual"))+
-  theme_bw()+
-  xlab("fraction of response (% BW change)")+
-  theme(axis.title.y = element_blank())+
-  geom_vline(xintercept = -0.05, linetype="dashed", color="red")
-
-ggsave(expboxplot.euserum, file="Boxplot European population serum Fraction of response.pdf", width=8, height=10)
-
-boxplot_frac <- ggarrange(expboxplot.port, expboxplot.chi, expboxplot.eu, expboxplot.euserum, ncol=4, nrow=1,
-                          labels = c("A","B","C","D"), font.label = list(size = 18))
-ggsave(boxplot_frac, file="Boxplot fraction of response.pdf", width=32, height=10, scale=0.6)
+ggsave(expboxplot.wang, file="Boxplot Wang et al (2019) population UE Fraction of response.pdf", width=8, height=10)
 ```
+
 ##compare with TDI values
 
 ```{r density}
-#Portuguese population
+set.seed(1234)
+#Martins et al. (2019) population
 pdi <- quantile(don.urine$`PDI DON`, prob=c(0.5,0.95))
 #Median: 0.21 ug/kg-d = 0.00021 mg/kg-d
 #P95: 1.58 ug/kg-d = 0.00158 mg/kg-d
 #P95/P50=7.52381
 #GM: 0.00021; GSD: 7.52381^(1/1.96)=2.800027
-pdi_por <- rlnorm(10000, meanlog = log(0.00021), sdlog=log(2.800027))
-d_por <- ecdf (pdi_por)
-por <- 100*c(1-d_por(0.001), 1-d_por(0.00044), 1-d_por(0.00266))
+pdi_m <- rlnorm(10000, meanlog = log(0.00021), sdlog=log(2.800027))
+quantile(pdi_m, prob=c(0.5, 0.05, 0.95))
+d_m <- ecdf (pdi_m)
+m <- 100*c(1-d_m(0.001), 1-d_m(0.00044), 1-d_m(0.00137))
 
-#Chinese population
+#Wang et al. (2019) population
 #Table 2. Estimated dietary DON intakes of the subjects. (Henan)
 #Mean: 1.82 ug/kg bw/day = 0.00182 mg/kg bw/day
 #SD: 2.10 ug/kg bw/day = 0.0021 mg/kg bw/day
@@ -739,21 +442,12 @@ por <- 100*c(1-d_por(0.001), 1-d_por(0.00044), 1-d_por(0.00266))
 #Q3: 0.00182+(0.675*0.0021)=0.0032375 mg/kg bw/day
 #GM: (0.0032375*0.0004025)^(1/2) = 0.001141531 mg/kg bw/day
 #GSD: (0.0032375/0.0004025)^(1/(qnorm(0.75)-qnorm(0.25))) = 4.690364
-intake_ch <- rlnorm(10000, meanlog = log(0.001141531), sdlog = log(4.690364))
-d_ch <- ecdf(intake_ch)
-ch <- 100*c(1-d_ch(0.001), 1-d_ch(0.00044), 1-d_ch(0.00266))
+intake_w <- rlnorm(10000, meanlog = log(0.001141531), sdlog = log(4.690364))
+quantile(intake_w, prob=c(0.5, 0.05, 0.95))
+d_w <- ecdf(intake_w)
+w <- 100*c(1-d_w(0.001), 1-d_w(0.00044), 1-d_w(0.00137))
 
-#European population
-#Q1: 79.7 ng/kg/day = 0.0000797 mg/kg bw/day
-#Q3: 274 ng/kg/day = 0.000274 mg/kg bw/day
-#GM: (0.0000797*0.000274)^(1/2) = 0.0001477762 mg/kg bw/day
-#GSD: (0.000274/0.0000797)^(1/(qnorm(0.75)-qnorm(0.25))) = 2.497779
-intake_eu <- rlnorm(10000, meanlog = log(0.0001477762), sdlog = log(2.497779))
-d_eu <- ecdf(intake_eu)
-eu <- 100*c(1-d_eu(0.001), 1-d_eu(0.00044), 1-d_eu(0.00266))
-
-perc_overtdi <- data.frame(por, ch, eu)
+perc_overtdi <- data.frame(m, w)
 perc_overtdi$TDI <- c("EFSA","WHO/IPCS","Prob TDI")
 write.csv(perc_overtdi, file="percent of population over TDI.csv", row.names = FALSE)
-
 ```

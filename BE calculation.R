@@ -22,8 +22,10 @@ cat("bmd",quantile(bmd,prob=c(0.5,0.05,0.95)),"\n")
 #Cavg_dose_a.GSD <- 1.987179^(1/1.96) = 1.42 
 Cavg_dose_a <- rlnorm(10000,meanlog = log(0.0144), sdlog=log(1.42))
 cat("Cavg_dose_a",quantile(Cavg_dose_a,prob=c(0.5,0.05,0.95)),"\n")
-AF_interTKblood <- 1/Cavg_dose_a
-cat("AF_interTKblood", quantile(AF_interTKblood,prob=c(0.5,0.05,0.95)),"\n")
+
+#BBMD x Cavg_a
+bmd_blood <- bmd*Cavg_dose_a
+cat("bmd_blood",quantile(bmd_blood,prob=c(0.5,0.05,0.95)),"\n")
 
 ### Inter-species TK
 ## AUC per unit dose calculation
@@ -78,7 +80,7 @@ write.csv(BE.urine.quan, file="BE.urine.quantiles.csv")
 BE.blood <- (bmd*Cavg_dose_a) / (AF_interTD*AF_intraTD)
 cat("BE.blood",quantile(BE.blood,prob=c(0.5,0.05,0.95)),"\n")
 
-BE.blood.df <- data.frame(bmd, Cavg_dose_a, AF_interTKblood, AF_interTD,
+BE.blood.df <- data.frame(bmd, Cavg_dose_a, bmd_blood, AF_interTD,
                           TD_var.GSD, AF_intraTD, BE.blood)
 fwrite(BE.blood.df,"Blood BE.samples.csv")
 
