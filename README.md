@@ -32,7 +32,7 @@ script:
   interspecies TK plot
 
 output: 
-  Supplementary Figure S1
+- Supplementary Figure S1
 
 ## Human TK modeling results
 
@@ -54,19 +54,19 @@ DON-LCL
 ## Combining datasets probabilistically
 
 script:
-  HDMI calculations.R
-  BE calculation.R
+- HDMI calculations.R
+- BE calculation.R
 
 output:
-  HDMI.samples.csv
-  HDMI.quantiles.csv
-  Urine BE.samples.
-  BE.urine.quantiles.csv
-  Blood BE.samples.csv
-  BE.blood.quantiles.csv
+- HDMI.samples.csv
+- HDMI.quantiles.csv
+- Urine BE.samples.
+- BE.urine.quantiles.csv
+- Blood BE.samples.csv
+- BE.blood.quantiles.csv
   
 ## Risk characterization 
-Incidence of effects of the median population and fraction of change based on different sensitive individuals are derived based on HDMI and BEMI functions. The incidence of effects of the median population prediction are compared with human biomonitoring data from Martins et al. (2019) and Wang et al. (2019).
+Incidence of effects of the median population and fraction of change of decreased body weight based on different sensitive individuals are derived based on HDMI and BEMI functions. The incidence of effects of the median population prediction are compared with human biomonitoring data from Martins et al. (2019) and Wang et al. (2019).
 
 input files:
 - iverson-f-et-al-1995-female-bmds.csv
@@ -74,17 +74,17 @@ input files:
 - HDMI.samples.csv
 - Urine BE.samples.csv
 - Blood BE.samples.csv
-- don exposure.csv (based on Martins et al. (2019) human biomonitoring exposure data, repository in "InputData" folder)
+- don exposure.csv - based on Martins et al. (2019) human biomonitoring exposure data, repository in "InputData" folder
 
 script:
   Incidence of effect.Rmd
   
 output:
-  doseresp.pdf
-  Urinary BE fraction of response.pdf
-  Blood BE fraction of response.pdf
-  Log scale Population Incidence of 5 percent Decrease in Body Weight.pdf (Manuscript Figure 6)
-  Percent change in BW for fractions of population.pdf (Supplementary Figure S8)
+- doseresp.pdf - Incidence of effect and fraction of change of decreased body weight on different in sensitive populations based on HDMI function
+- Urinary BE fraction of response.pdf - Incidence of effect and fraction of change of decreased body weight on different in sensitive populations based on urinary BEMI function
+- Blood BE fraction of response.pdf - Incidence of effect and fraction of change of decreased body weight on different in sensitive populations based on blood BEMI function
+- Log scale Population Incidence of 5 percent Decrease in Body Weight.pdf (Manuscript Figure 6)
+- Percent change in BW for fractions of population.pdf (Supplementary Figure S8)
   
 ## Risk characterization
 Individual Margin of Exposure is derived for sensitive population and random individuals for two study populations. Fraction of change of decreased body weight based on BEMI functions is calculated for different sensitive populations. Population exceeding TDI is calculated using EFSA (2017) TDI, WHO/IPCS (2018), the derived probabilitic TDI in this project.
@@ -94,19 +94,19 @@ input files:
 - iverson-f-et-al-1995-male-bmds.csv
 - Urine BE.samples.csv
 - Blood BE.samples.csv
-- don exposure.csv (based on Martins et al. (2019) human biomonitoring exposure data, repository in "InputData" folder)
+- don exposure.csv - based on Martins et al. (2019) human biomonitoring exposure data, repository in "InputData" folder
 
 script:
   Biomonitoring exposure.Rmd
 
 output: 
-  Martins et al (2019) population MOE quantile.csv
-  Wang et al (2019) population MOE quantile.csv
-  Percent Martins et al (2019) population UE fraction of response.csv
-  Percent Wang et al (2019) population UE fraction of response.csv
-  Martins et al (2019) Density plot_Fraction of response.pdf
-  Quantiles of Martins et al (2019) population UE fraction of response.csv
-  Quantiles of Wang et al (2019) population UE fraction of response.csv
-  Boxplot Martins et al (2019) population UE Fraction of response.pdf
-  Boxplot Wang et al (2019) population UE Fraction of response.pdf
-  percent of population over TDI.csv
+- Martins et al (2019) population MOE quantile.csv
+- Wang et al (2019) population MOE quantile.csv
+- Percent Martins et al (2019) population UE fraction of response.csv
+- Percent Wang et al (2019) population UE fraction of response.csv
+- Martins et al (2019) Density plot_Fraction of response.pdf
+- Quantiles of Martins et al (2019) population UE fraction of response.csv
+- Quantiles of Wang et al (2019) population UE fraction of response.csv
+- Boxplot Martins et al (2019) population UE Fraction of response.pdf
+- Boxplot Wang et al (2019) population UE Fraction of response.pdf
+- percent of population over TDI.csv
