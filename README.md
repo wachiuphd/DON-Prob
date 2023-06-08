@@ -69,8 +69,8 @@ output:
 Incidence of effects of the median population and fraction of change of decreased body weight based on different sensitive individuals are derived based on HDMI and BEMI functions. The incidence of effects of the median population prediction are compared with human biomonitoring data from Martins et al. (2019) and Wang et al. (2019).
 
 input files:
-- iverson-f-et-al-1995-female-bmds.csv
-- iverson-f-et-al-1995-male-bmds.csv
+- iverson-f-et-al-1995-female-bmds.csv - original files in repository: BBMD plot
+- iverson-f-et-al-1995-male-bmds.csv - original files in repository: BBMD plot
 - HDMI.samples.csv
 - Urine BE.samples.csv
 - Blood BE.samples.csv
@@ -90,8 +90,8 @@ output:
 Individual Margin of Exposure is derived for sensitive population and random individuals for two study populations. Fraction of change of decreased body weight based on BEMI functions is calculated for different sensitive populations. Population exceeding TDI is calculated using EFSA (2017) TDI, WHO/IPCS (2018), the derived probabilitic TDI in this project.
 
 input files:
-- iverson-f-et-al-1995-female-bmds.csv
-- iverson-f-et-al-1995-male-bmds.csv
+- iverson-f-et-al-1995-female-bmds.csv - original files in repository: BBMD plot
+- iverson-f-et-al-1995-male-bmds.csv - original files in repository: BBMD plot
 - Urine BE.samples.csv
 - Blood BE.samples.csv
 - don exposure.csv - based on Martins et al. (2019) human biomonitoring exposure data, repository in "InputData" folder
