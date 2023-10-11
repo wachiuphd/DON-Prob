@@ -80,7 +80,7 @@ script:
   Incidence of effect.Rmd
   
 output:
-- doseresp.pdf - Incidence of effect and fraction of change of decreased body weight on different in sensitive populations based on HDMI function
+- HDMI fraction of response.pdf - Incidence of effect and fraction of change of decreased body weight on different in sensitive populations based on HDMI function
 - Urinary BE fraction of response.pdf - Incidence of effect and fraction of change of decreased body weight on different in sensitive populations based on urinary BEMI function
 - Blood BE fraction of response.pdf - Incidence of effect and fraction of change of decreased body weight on different in sensitive populations based on blood BEMI function
 - Log scale Population Incidence of 5 percent Decrease in Body Weight.pdf (Manuscript Figure 6)
