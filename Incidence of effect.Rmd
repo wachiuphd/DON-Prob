@@ -59,12 +59,13 @@ incBMR5 <- ggplot(incBMRconf)+
   geom_line(aes(x=d_H,y=`50%`))+
   geom_line(aes(x=d_H,y=`5%`),linetype="dotted",alpha=0.5)+
   geom_line(aes(x=d_H,y=`95%`),linetype="dotted",alpha=0.5)+
-  xlab("DON dose (mg/kg-d)")+ylab("Population incidence of 5% decrease in body Weight")+
+  xlab("DON dose (mg/kg-day)")+ylab("Population incidence of 5% decrease in body Weight")+
   theme_bw()+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(0,1))+
   scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  theme(text = element_text(size = 12))+
+  theme(text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
   geom_vline(xintercept=0.00137, linetype="dashed", color="red")+
   annotation_logticks(sides="b")
 print(incBMR5)
@@ -84,14 +85,15 @@ incBMR5.log <- ggplot(incBMRconf)+
   theme(text = element_text(size = 12))+
   geom_vline(xintercept=0.00137, linetype="dashed", color="red")+
   geom_point(aes(x=0.00137, y=1e-2), color="red", size=3, shape=15)+
-  geom_point(aes(x=1.118482e-03, y=7e-03), color="darkgreen", size=3, shape=9)+
-  geom_segment(aes(x=2.110046e-04,y=7e-03/2,xend=2.110046e-04,yend=7e-03*2),color="darkgreen",linetype="solid")+
-  geom_rect(aes(xmin=3.949904e-05, xmax=1.118482e-03,ymin=7e-03/2,ymax=7e-03*2), fill="darkgreen", alpha= 0.005)+ #ymax=y*2; ymin=y/2
-  geom_point(aes(x=1.410770e-02, y=4.1e-01), color="steelblue", size=3, shape=9)+
-  geom_segment(aes(x=1.143537e-03,y=4.1e-01/2,xend=1.143537e-03,yend=4.1e-01*2),color="steelblue",linetype="solid")+
-  geom_rect(aes(xmin=8.762731e-05, xmax=1.410770e-02,ymin=4.1e-01/2, ymax=4.1e-01*2), fill="steelblue", alpha= 0.005)+
+  geom_point(aes(x=1.118482e-03, y=6.6e-03), color="darkgreen", size=3, shape=9)+
+  geom_segment(aes(x=2.110046e-04,y=6.6e-03/2,xend=2.110046e-04,yend=6.6e-03*2),color="darkgreen",linetype="solid")+
+  geom_rect(aes(xmin=3.949904e-05, xmax=1.118482e-03,ymin=6.6e-03/2,ymax=6.6e-03*2), fill="darkgreen", alpha= 0.005)+ #ymax=y*2; ymin=y/2
+  geom_point(aes(x=1.410770e-02, y=3.9e-01), color="steelblue", size=3, shape=9)+
+  geom_segment(aes(x=1.143537e-03,y=3.9e-01/2,xend=1.143537e-03,yend=3.9e-01*2),color="steelblue",linetype="solid")+
+  geom_rect(aes(xmin=8.762731e-05, xmax=1.410770e-02,ymin=3.9e-01/2, ymax=3.9e-01*2), fill="steelblue", alpha= 0.005)+
   annotation_logticks(sides="bl")+
-  theme(axis.title = element_text(size = 12))
+  theme(axis.title = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
 print(incBMR5.log)
 ```
 
@@ -216,9 +218,12 @@ percent01 <- ggplot(subset(yconf.df, poppct %in% "1%ile"))+
   ggtitle("1%ile of Population") + 
   xlab("DON dose (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00137, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent01)
 
 percent05 <- ggplot(subset(yconf.df, poppct %in% "5%ile"))+
@@ -230,9 +235,12 @@ percent05 <- ggplot(subset(yconf.df, poppct %in% "5%ile"))+
   ggtitle("5%ile of Population") + 
   xlab("DON dose (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00137, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent05)
 
 percent50 <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
@@ -244,9 +252,12 @@ percent50 <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
   ggtitle("50%ile of Population") + 
   xlab("DON dose (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00137, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent50)
 
 percent95 <- ggplot(subset(yconf.df, poppct %in% "95%ile"))+
@@ -258,9 +269,12 @@ percent95 <- ggplot(subset(yconf.df, poppct %in% "95%ile"))+
   ggtitle("95%ile of Population") + 
   xlab("DON dose (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00137, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent95)
 
 percent99 <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
@@ -272,13 +286,15 @@ percent99 <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
   ggtitle("99%ile of Population") + 
   xlab("DON dose (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00137, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent99)
 
 ### Population mean
-
 yconfmean.df <- data.frame()
 ymean<-numeric() # blank 
 npop <- 100
@@ -361,17 +377,20 @@ popmean <- ggplot(yconfmean)+
   ggtitle("Population Mean") + 
   xlab("DON dose (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00137, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00137, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(popmean)
 
 doseresp.BMR5 <- ggarrange(incBMR5, incBMR5.log, labels = c("A","B"), nrow = 2, ncol = 1, font.label = list(size = 18))
 doseresp.pop <- ggarrange(popmean, percent01, percent50, percent99, labels = c("C","D","E","F"), nrow = 4, ncol = 1, font.label = list(size = 18))
 doseresp <- ggarrange(doseresp.BMR5, doseresp.pop, nrow=1, ncol=2)
-ggsave("doseresp.pdf",plot=doseresp, scale=0.7, width=20, height=20)
+ggsave("HDMI fraction of response.pdf",plot=doseresp, scale=0.7, width=20, height=20)
 
-doseresp <- ggarrange(popmean, percent01, percent05, percent50, nrow=4, ncol=1)
+hdmi_fracresp <- ggarrange(popmean, percent01, percent05, percent50, nrow=4, ncol=1)
 ```
 
 ### incidence of effect by urine BE
@@ -395,13 +414,14 @@ incBMR5.be <- ggplot(incBMRconf)+
   geom_line(aes(x=be_H,y=`50%`))+
   geom_line(aes(x=be_H,y=`5%`),linetype="dotted",alpha=0.5)+
   geom_line(aes(x=be_H,y=`95%`),linetype="dotted",alpha=0.5)+
-  xlab("Urinary biomonitoring equivalent (mg/kg-d)")+ylab("Population incidence of 5% decrease in body weight")+
+  xlab("Urinary biomonitoring equivalent (mg/kg-day)")+ylab("Population incidence of 5% decrease in body weight")+
   theme_bw()+
   coord_cartesian(xlim=c(5e-5,1),ylim=c(0,1))+
   scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  theme(text = element_text(size = 12))+
-  geom_vline(xintercept=0.00098, linetype="dashed", color="red")+
+  theme(text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.001, linetype="dashed", color="red")+
   geom_vline(xintercept=2.508499e-05, linetype="dotted", color="darkgreen")+
   geom_vline(xintercept=7.170922e-04, linetype="dotted", color="darkgreen")+
   geom_vline(xintercept=1.346428e-04, linetype="solid", color="darkgreen")+
@@ -426,8 +446,8 @@ incBMR5.be.log <- ggplot(incBMRconf)+
   scale_y_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
   theme(text = element_text(size = 12))+
-  geom_vline(xintercept=0.00098, linetype="dashed", color="red")+
-  geom_point(aes(x=0.00098, y=1e-2), color="red", size=3, shape=15)+
+  geom_vline(xintercept=0.001, linetype="dashed", color="red")+
+  geom_point(aes(x=0.001, y=1e-2), color="red", size=3, shape=15)+
   geom_point(aes(x=7.170922e-04, y=5e-03), color="darkgreen", size=3, shape=9)+
   geom_segment(aes(x=1.346428e-04,y=5e-03/2,xend=1.346428e-04,yend=5e-03*2),color="darkgreen",linetype="solid")+
   geom_rect(aes(xmin=2.508499e-05, xmax=7.170922e-04,ymin=5e-03/2,ymax=5e-03*2), fill="darkgreen", alpha= 0.005)+ #ymax=y*2; ymin=y/2
@@ -435,7 +455,8 @@ incBMR5.be.log <- ggplot(incBMRconf)+
   geom_segment(aes(x=0.0008617678,y=0.21/2,xend=0.0008617678,yend=0.21*2),color="steelblue",linetype="solid")+
   geom_rect(aes(xmin=0.0001367598, xmax=0.0053842140,ymin=0.21/2, ymax=0.21*2), fill="steelblue", alpha= 0.005)+
   annotation_logticks(sides="bl")+
-  theme(axis.title = element_text(size = 11))
+  theme(axis.title = element_text(size = 11),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
 print(incBMR5.be.log)
 ```
 
@@ -524,9 +545,12 @@ percent01.be <- ggplot(subset(yconf.df, poppct %in% "1%ile"))+
   ggtitle("1%ile of Population") + 
   xlab("Urinary biomonitoring equivalent (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.001, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent01.be)
 
 percent05.be <- ggplot(subset(yconf.df, poppct %in% "5%ile"))+
@@ -538,9 +562,12 @@ percent05.be <- ggplot(subset(yconf.df, poppct %in% "5%ile"))+
   ggtitle("5%ile of Population") + 
   xlab("Urinary biomonitoring equivalent (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.001, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent05.be)
 
 percent50.be <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
@@ -552,9 +579,12 @@ percent50.be <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
   ggtitle("50%ile of Population") + 
   xlab("Urinary biomonitoring equivalent (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.001, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent50.be)
 
 percent95.be <- ggplot(subset(yconf.df, poppct %in% "95%ile"))+
@@ -566,9 +596,12 @@ percent95.be <- ggplot(subset(yconf.df, poppct %in% "95%ile"))+
   ggtitle("95%ile of Population") + 
   xlab("Urinary biomonitoring equivalent (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.001, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent95.be)
 
 percent99.be <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
@@ -580,9 +613,12 @@ percent99.be <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
   ggtitle("99%ile of Population") + 
   xlab("Urinary biomonitoring equivalent (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.001, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent99.be)
 
 ### Population mean
@@ -669,9 +705,12 @@ popmean.be <- ggplot(yconfmean)+
   ggtitle("Population Mean") + 
   xlab("Urinary biomonitoring equivalent (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.001, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(popmean.be)
 
 ### Population random sample 
@@ -759,9 +798,12 @@ popran.be <- ggplot(yconfran)+
   ggtitle("Population Random Sample") + 
   xlab("Urinary biomonitoring equivalent (mg/kg-day)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-3,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00098, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.001, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(popran.be)
 
 ##combine graphs
@@ -770,7 +812,7 @@ urine_fracresp.pop <- ggarrange(popmean.be, percent01.be, percent50.be, percent9
 urine_fracresp <- ggarrange(urine_fracresp.BMR5, urine_fracresp.pop, nrow=1, ncol=2)
 ggsave("Urinary BE fraction of response.pdf",plot=urine_fracresp, scale=0.7, width=20, height=20)
 
-urine_fracresp <- ggarrange(popmean.be, percent01.be, percent05.be, percent50.be, nrow = 4, ncol = 1)
+be.u_fracresp <- ggarrange(popmean.be, percent01.be, percent05.be, percent50.be, nrow = 4, ncol = 1)
 ```
 
 ##incidence of effect by blood BE
@@ -799,7 +841,8 @@ incBMR5.b_be <- ggplot(b_incBMRconf)+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(0,1))+
   scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  theme(text = element_text(size = 12))+
+  theme(text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
   geom_vline(xintercept=0.00017, linetype="dashed", color="red")+
   annotation_logticks(sides="b")
 print(incBMR5.b_be)
@@ -816,7 +859,8 @@ incBMR5.b_be.log <- ggplot(b_incBMRconf)+
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
   scale_y_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  theme(text = element_text(size = 12))+
+  theme(text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
   geom_vline(xintercept=0.00017, linetype="dashed", color="red")+
   geom_point(aes(x=0.00017, y=1e-2), color="red", size=3, shape=15)+
   annotation_logticks(sides="bl")+
@@ -909,9 +953,12 @@ percent01.b_be <- ggplot(subset(yconf.df, poppct %in% "1%ile"))+
   ggtitle("1%ile of Population") + 
   xlab("Blood biomonitoring equivalent (mg/L)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00017, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent01.b_be)
 
 percent05.b_be <- ggplot(subset(yconf.df, poppct %in% "5%ile"))+
@@ -923,9 +970,12 @@ percent05.b_be <- ggplot(subset(yconf.df, poppct %in% "5%ile"))+
   ggtitle("5%ile of Population") + 
   xlab("Blood biomonitoring equivalent (mg/L)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00017, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent05.b_be)
 
 percent50.b_be <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
@@ -937,9 +987,12 @@ percent50.b_be <- ggplot(subset(yconf.df, poppct %in% "50%ile"))+
   ggtitle("50%ile of Population") + 
   xlab("Blood biomonitoring equivalent (mg/L)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00017, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent50.b_be)
 
 percent95.b_be <- ggplot(subset(yconf.df, poppct %in% "95%ile"))+
@@ -951,9 +1004,12 @@ percent95.b_be <- ggplot(subset(yconf.df, poppct %in% "95%ile"))+
   ggtitle("95%ile of Population") + 
   xlab("Blood biomonitoring equivalent (mg/L)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00017, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent95.b_be)
 
 percent99.b_be <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
@@ -965,9 +1021,12 @@ percent99.b_be <- ggplot(subset(yconf.df, poppct %in% "99%ile"))+
   ggtitle("99%ile of Population") + 
   xlab("Blood biomonitoring equivalent (mg/L)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00017, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(percent99.b_be)
 
 ### Population mean
@@ -1054,9 +1113,12 @@ popmean.b_be <- ggplot(yconfmean)+
   ggtitle("Population Mean") + 
   xlab("Blood biomonitoring equivalent (mg/L)")+ylab("Percent change in body weight (%)")+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(-25,0))+
-  scale_x_log10()+
-  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))+
-  geom_vline(xintercept=0.00017, linetype="dashed", color="red")
+  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+  theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
+  geom_vline(xintercept=0.00017, linetype="dashed", color="red")+
+  annotation_logticks(sides="b")
 print(popmean.b_be)
 
 ##combine graphs
@@ -1065,7 +1127,7 @@ blood_fracresp.pop <- ggarrange(popmean.b_be, percent01.b_be, percent50.b_be, pe
 blood_fracresp <- ggarrange(blood_fracresp.BMR5, blood_fracresp.pop, nrow=1, ncol=2)
 ggsave("Blood BE fraction of response.pdf", plot=blood_fracresp, scale=0.7, width=20, height=20)
 
-blood_fracresp <- ggarrange(popmean.b_be, percent01.b_be, percent05.b_be, percent50.b_be, nrow = 4, ncol = 1)
+be.b_fracresp <- ggarrange(popmean.b_be, percent01.b_be, percent05.b_be, percent50.b_be, nrow = 4, ncol = 1)
 ```
 
 ###Log scale: Population Incidence of 5% Decrease in Body Weight
@@ -1079,7 +1141,7 @@ ggsave("Log scale Population Incidence of 5 percent Decrease in Body Weight.pdf"
 ## % Change in body weight for different fraction of population
 
 ```{r ggplot}
-frac.pop <- ggarrange(doseresp, blood_fracresp, urine_fracresp, nrow = 1, ncol = 3, labels = c("A","B","C"), font.label = list(size = 18))
+frac.pop <- ggarrange(hdmi_fracresp, be.b_fracresp, be.u_fracresp, nrow = 1, ncol = 3, labels = c("A","B","C"), font.label = list(size = 18))
 ggsave("Percent change in BW for fractions of population.pdf", plot=frac.pop, scale=0.7, width=24, height=22)
 ```
 

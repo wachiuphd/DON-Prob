@@ -331,36 +331,36 @@ write.csv(yran.df, file="Percent Wang et al (2019) population UE fraction of res
 random <- ggplot(yran.df, aes(x=random))+
   geom_density()+
   theme_bw()+
-  ggtitle("random individual")+
-  xlab("fraction of response (% BW change)")+
+  ggtitle("Random individual")+
+  xlab("Fraction of response (% BW change)")+
   theme(axis.title.y = element_blank())
 
 mean <- ggplot(yran.df, aes(x=mean))+
   geom_density()+
   theme_bw()+
-  ggtitle("population mean")+
-  xlab("fraction of response (% BW change)")+
+  ggtitle("Population mean")+
+  xlab("Fraction of response (% BW change)")+
   theme(axis.title.y = element_blank())
 
 perc01 <- ggplot(yran.df, aes(x=`1%pop`))+
   geom_density()+
   theme_bw()+
   ggtitle("1%ile of Population")+
-  xlab("fraction of response (% BW change)")+
+  xlab("Fraction of response (% BW change)")+
   theme(axis.title.y = element_blank())
 
 perc50 <- ggplot(yran.df, aes(x=`50%pop`))+
   geom_density()+
   theme_bw()+
   ggtitle("50%ile of Population")+
-  xlab("fraction of response (% BW change)")+
+  xlab("Fraction of response (% BW change)")+
   theme(axis.title.y = element_blank())
 
 perc99 <- ggplot(yran.df, aes(x=`99%pop`))+
   geom_density()+
   theme_bw()+
   ggtitle("99%ile of Population")+
-  xlab("fraction of response (% BW change)")+
+  xlab("Fraction of response (% BW change)")+
   theme(axis.title.y = element_blank())
 
 frac <- ggarrange(random, mean, perc01, perc50, perc99, nrow=5, ncol=1)
@@ -393,9 +393,9 @@ expboxplot.mar <- ggplot(melt.yran.mar, aes(x=value, y=variable))+
                outlier.shape=NA,
                show.legend = FALSE)+
   scale_x_continuous(limits=c(-0.1,0), breaks = c(-0.10,-0.05, 0), labels = c("-10%","-5%","0"))+
-  scale_y_discrete(limits=rev, labels = c("population 99%","population 95%","population median","population 5%","populaion 1%","population mean","random individual"))+
+  scale_y_discrete(limits=rev, labels = c("Population 99%","Population 95%","Population median","Population 5%","Populaion 1%","Population mean","Random individual"))+
   theme_bw()+
-  xlab("fraction of response (% BW change)")+
+  xlab("Fraction of response (% BW change)")+
   theme(axis.title.y = element_blank())+
   geom_vline(xintercept = -0.05, linetype="dashed", color="red")
 
@@ -410,9 +410,9 @@ expboxplot.wang <- ggplot(melt.yran.wang, aes(x=value, y=variable))+
                outlier.shape=NA,
                show.legend = FALSE)+
   scale_x_continuous(limits=c(-0.1,0), breaks = c(-0.10,-0.05, 0), labels = c("-10%","-5%","0"))+
-  scale_y_discrete(limits=rev, labels = c("population 99%","population 95%","population median","population 5%","populaion 1%","population mean","random individual"))+
+  scale_y_discrete(limits=rev, labels = c("Population 99%","Population 95%","Population median","Population 5%","Populaion 1%","Population mean","Random individual"))+
   theme_bw()+
-  xlab("fraction of response (% BW change)")+
+  xlab("Fraction of response (% BW change)")+
   theme(axis.title.y = element_blank())+
   geom_vline(xintercept = -0.05, linetype="dashed", color="red")
 
