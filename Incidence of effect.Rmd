@@ -446,9 +446,9 @@ incBMR5.be.log <- ggplot(incBMRconf)+
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
   geom_vline(xintercept=0.001, linetype="dashed", color="red")+
   geom_point(aes(x=0.001, y=1e-2), color="red", size=3, shape=15)+
-  geom_point(aes(x=7.170922e-04, y=5e-03), color="darkgreen", size=3, shape=9)+
-  geom_segment(aes(x=1.346428e-04,y=5e-03/2,xend=1.346428e-04,yend=5e-03*2),color="darkgreen",linetype="solid")+
-  geom_rect(aes(xmin=2.508499e-05, xmax=7.170922e-04,ymin=5e-03/2,ymax=5e-03*2), fill="darkgreen", alpha= 0.005)+ #ymax=y*2; ymin=y/2
+  geom_point(aes(x=7.170922e-04, y=4.6e-03), color="darkgreen", size=3, shape=9)+
+  geom_segment(aes(x=1.346428e-04,y=4.6e-03/2,xend=1.346428e-04,yend=4.6e-03*2),color="darkgreen",linetype="solid")+
+  geom_rect(aes(xmin=2.508499e-05, xmax=7.170922e-04,ymin=4.6e-03/2,ymax=4.6e-03*2), fill="darkgreen", alpha= 0.005)+ #ymax=y*2; ymin=y/2
   geom_point(aes(x=0.0053842140, y=0.21), color="steelblue", size=3, shape=9)+
   geom_segment(aes(x=0.0008617678,y=0.21/2,xend=0.0008617678,yend=0.21*2),color="steelblue",linetype="solid")+
   geom_rect(aes(xmin=0.0001367598, xmax=0.0053842140,ymin=0.21/2, ymax=0.21*2), fill="steelblue", alpha= 0.005)+
