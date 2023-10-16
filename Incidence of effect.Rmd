@@ -80,9 +80,8 @@ incBMR5.log <- ggplot(incBMRconf)+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(3e-3,1))+
   scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  scale_y_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
-                labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  theme(text = element_text(size = 12))+
+  scale_y_log10(breaks = scales::trans_breaks("log10", function(x) 10^x, n=3),
+                labels = scales::trans_format("log10", scales::math_format(10^.x))) +
   geom_vline(xintercept=0.00137, linetype="dashed", color="red")+
   geom_point(aes(x=0.00137, y=1e-2), color="red", size=3, shape=15)+
   geom_point(aes(x=1.118482e-03, y=6.6e-03), color="darkgreen", size=3, shape=9)+
@@ -92,7 +91,7 @@ incBMR5.log <- ggplot(incBMRconf)+
   geom_segment(aes(x=1.143537e-03,y=3.9e-01/2,xend=1.143537e-03,yend=3.9e-01*2),color="steelblue",linetype="solid")+
   geom_rect(aes(xmin=8.762731e-05, xmax=1.410770e-02,ymin=3.9e-01/2, ymax=3.9e-01*2), fill="steelblue", alpha= 0.005)+
   annotation_logticks(sides="bl")+
-  theme(axis.title = element_text(size = 12),
+  theme(axis.title = element_text(size = 11), text = element_text(size = 11),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
 print(incBMR5.log)
 ```
@@ -443,9 +442,8 @@ incBMR5.be.log <- ggplot(incBMRconf)+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(3e-3,1))+
   scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  scale_y_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+  scale_y_log10(breaks = scales::trans_breaks("log10", function(x) 10^x, n=3),
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  theme(text = element_text(size = 12))+
   geom_vline(xintercept=0.001, linetype="dashed", color="red")+
   geom_point(aes(x=0.001, y=1e-2), color="red", size=3, shape=15)+
   geom_point(aes(x=7.170922e-04, y=5e-03), color="darkgreen", size=3, shape=9)+
@@ -455,7 +453,7 @@ incBMR5.be.log <- ggplot(incBMRconf)+
   geom_segment(aes(x=0.0008617678,y=0.21/2,xend=0.0008617678,yend=0.21*2),color="steelblue",linetype="solid")+
   geom_rect(aes(xmin=0.0001367598, xmax=0.0053842140,ymin=0.21/2, ymax=0.21*2), fill="steelblue", alpha= 0.005)+
   annotation_logticks(sides="bl")+
-  theme(axis.title = element_text(size = 11),
+  theme(axis.title = element_text(size = 11), text = element_text(size = 11),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
 print(incBMR5.be.log)
 ```
@@ -857,14 +855,13 @@ incBMR5.b_be.log <- ggplot(b_incBMRconf)+
   coord_cartesian(xlim=c(1e-4,1),ylim=c(3e-3,1))+
   scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  scale_y_log10(breaks = scales::trans_breaks("log10", function(x) 10^x),
+  scale_y_log10(breaks = scales::trans_breaks("log10", function(x) 10^x, n=3),
                 labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  theme(text = element_text(size = 12),
+  theme(axis.title = element_text(size = 11), text = element_text(size = 11),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())+
   geom_vline(xintercept=0.00017, linetype="dashed", color="red")+
   geom_point(aes(x=0.00017, y=1e-2), color="red", size=3, shape=15)+
-  annotation_logticks(sides="bl")+
-  theme(axis.title = element_text(size = 11))
+  annotation_logticks(sides="bl")
 print(incBMR5.b_be.log)
 ```
 
@@ -1133,9 +1130,9 @@ be.b_fracresp <- ggarrange(popmean.b_be, percent01.b_be, percent05.b_be, percent
 ###Log scale: Population Incidence of 5% Decrease in Body Weight
 
 ```{r ggplot}
-popincidence <- ggarrange(incBMR5.log, ggarrange(incBMR5.b_be.log, incBMR5.be.log, nrow=1, ncol=2, labels=c("B","C")),
-                          nrow=2, ncol=1, labels = "A", font.label = list(size = 12),heights=c(1.5,1))
-ggsave("Log scale Population Incidence of 5 percent Decrease in Body Weight.pdf", plot=popincidence, scale=0.7, width=16, height=16)
+popincidence <- ggarrange(incBMR5.log, incBMR5.b_be.log, incBMR5.be.log, 
+                          nrow=3, ncol=1, labels = c("A","B","C"), font.label = list(size = 14))
+ggsave("Log scale Population Incidence of 5 percent Decrease in Body Weight.pdf", plot=popincidence, scale=0.7, width=8, height=20)
 ```
 
 ## % Change in body weight for different fraction of population
